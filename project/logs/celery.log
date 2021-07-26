@@ -1,0 +1,46 @@
+[2021-07-26 09:56:27,710: INFO/MainProcess] Connected to redis://redis:6379/0
+[2021-07-26 09:56:27,720: INFO/MainProcess] mingle: searching for neighbors
+[2021-07-26 09:56:28,742: INFO/MainProcess] mingle: all alone
+[2021-07-26 09:56:28,757: INFO/MainProcess] celery@c0af93a63301 ready.
+[2021-07-26 09:56:33,953: INFO/MainProcess] Events of group {task} enabled by remote.
+[2021-07-26 09:58:07,575: INFO/MainProcess] Connected to redis://redis:6379/0
+[2021-07-26 09:58:07,602: INFO/MainProcess] mingle: searching for neighbors
+[2021-07-26 09:58:08,643: INFO/MainProcess] mingle: all alone
+[2021-07-26 09:58:08,656: INFO/MainProcess] celery@9d5e3e034c4c ready.
+[2021-07-26 09:58:13,622: INFO/MainProcess] Events of group {task} enabled by remote.
+[2021-07-26 10:16:19,757: WARNING/MainProcess] consumer: Connection to broker lost. Trying to re-establish the connection...
+Traceback (most recent call last):
+  File "/.venv/lib/python3.9/site-packages/celery/worker/consumer/consumer.py", line 318, in start
+    blueprint.start(self)
+  File "/.venv/lib/python3.9/site-packages/celery/bootsteps.py", line 119, in start
+    step.start(parent)
+  File "/.venv/lib/python3.9/site-packages/celery/worker/consumer/consumer.py", line 599, in start
+    c.loop(*c.loop_args())
+  File "/.venv/lib/python3.9/site-packages/celery/worker/loops.py", line 83, in asynloop
+    next(loop)
+  File "/.venv/lib/python3.9/site-packages/kombu/asynchronous/hub.py", line 364, in create_loop
+    cb(*cbargs)
+  File "/.venv/lib/python3.9/site-packages/kombu/transport/redis.py", line 1083, in on_readable
+    self.cycle.on_readable(fileno)
+  File "/.venv/lib/python3.9/site-packages/kombu/transport/redis.py", line 354, in on_readable
+    chan.handlers[type]()
+  File "/.venv/lib/python3.9/site-packages/kombu/transport/redis.py", line 688, in _receive
+    ret.append(self._receive_one(c))
+  File "/.venv/lib/python3.9/site-packages/kombu/transport/redis.py", line 698, in _receive_one
+    response = c.parse_response()
+  File "/.venv/lib/python3.9/site-packages/redis/client.py", line 3505, in parse_response
+    response = self._execute(conn, conn.read_response)
+  File "/.venv/lib/python3.9/site-packages/redis/client.py", line 3479, in _execute
+    return command(*args, **kwargs)
+  File "/.venv/lib/python3.9/site-packages/redis/connection.py", line 739, in read_response
+    response = self._parser.read_response()
+  File "/.venv/lib/python3.9/site-packages/redis/connection.py", line 324, in read_response
+    raw = self._buffer.readline()
+  File "/.venv/lib/python3.9/site-packages/redis/connection.py", line 256, in readline
+    self._read_from_socket()
+  File "/.venv/lib/python3.9/site-packages/redis/connection.py", line 201, in _read_from_socket
+    raise ConnectionError(SERVER_CLOSED_CONNECTION_ERROR)
+redis.exceptions.ConnectionError: Connection closed by server.
+[2021-07-26 10:16:19,788: ERROR/MainProcess] consumer: Cannot connect to redis://redis:6379/0: Error 111 connecting to redis:6379. Connection refused..
+Trying again in 2.00 seconds... (1/100)
+

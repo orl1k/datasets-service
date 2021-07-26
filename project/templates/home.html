@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<form class="ui form" method="post">
+
+
+    <h4 class="ui dividing header">Script args</h4>
+
+
+    <div class="ui segment">
+        <h3 class="ui header">
+            <i class="calendar icon"></i>
+            <div class="content">
+                Dataset date
+            </div>
+        </h3>
+        <div class="ui calendar" id="dataset_date">
+            <div class="ui input left icon">
+                <i class="calendar icon"></i>
+                <input name="dataset_date" type="select" placeholder="Date">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $('#dataset_date')
+            .calendar({
+                type: 'date'
+            })
+            ;
+
+    </script>
+
+
+    <div class="ui segment">
+        <h3 class="ui header">
+            <i class="folder icon"></i>
+            <div class="content">
+                Pathes
+            </div>
+        </h3>
+        <div class="two fields">
+            <div class="field">
+                <label>Rasters</label>
+                <input name="rasters_path" type="text" placeholder="Enter rasters path" value="/mnt/Gold2/rasters">
+            </div>
+            <div class="field">
+                <label>Datasets</label>
+                <input name="datasets_path" type="text" placeholder="Enter datasets path" value="/mnt/Gold1/datasets">
+            </div>
+        </div>
+        <div class="two fields">
+            <div class="field">
+                <label>Icemaps</label>
+                <input name="icemaps_path" type="text" placeholder="Enter icemaps path" value="/mnt/Gold2/ice_maps/KAR">
+            </div>
+            <div class="field">
+                <label>Land shape</label>
+                <input name="land_path" type="text" placeholder="Enter land shape path"
+                    value="/mnt/Gold2/land/bigger/Shore_20191212.shp">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui three column center aligned stackable divided grid segment">
+        <div class="column">
+            <div class="ui test toggle checkbox">
+                <input type="checkbox" name="age" checked="checked">
+                <label>age</label>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui test toggle checkbox">
+                <input type="checkbox" name="concentrat" checked="checked">
+                <label>concentrat</label>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui test toggle checkbox">
+                <input type="checkbox" name="age_group" checked="checked">
+                <label>age_group</label>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="ui two column center aligned stackable divided grid segment">
+        <div class="column">
+            <div class="ui test toggle checkbox">
+                <input type="checkbox" name="advanced" checked="checked">
+                <label>advanced</label>
+            </div>
+        </div>
+        <div class="column">
+            <div class="ui test toggle checkbox">
+                <input type="checkbox" name="simple" checked="checked">
+                <label>simple</label>
+            </div>
+        </div>
+    </div>
+
+
+    <button class="ui primary button" type="submit" tabindex="1">Start script</button>
+    <!-- <script>
+        jQuery(function () {
+            jQuery('#modal').click();
+        });
+    </script> -->
+
+
+</form>
+
+
+{% endblock %}
