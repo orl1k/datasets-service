@@ -1,6 +1,8 @@
 import argparse, sys
+import time
 
 if __name__ == "__main__":
+    time.sleep(200)
     argparser = argparse.ArgumentParser()
 
     argparser.add_argument(

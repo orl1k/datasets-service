@@ -2,43 +2,87 @@ version: '3.8'
 
 services:
 
-  web:
-    build: ./project
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbitmq
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    image: rabbitmq:3
     ports:
-      - 8004:8000
-    command: uvicorn main:app --host 0.0.0.0 --reload
-    volumes:
-      - ./project:/home/datasets-api
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    depends_on:
-      - redis
-
-  worker:
-    build: ./project
-    command: celery worker --app=worker.celery --loglevel=info --logfile=logs/celery.log
-    volumes:
-      - ./project:/home/datasets-api
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-    depends_on:
-      - web
-      - redis
+      - "5672:5672"
+    restart: on-failure
+    networks:
+      - main
 
   redis:
+    container_name: redis                                                            
     image: redis:6-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - main
+    volumes:
+      - redis-data:/data
 
-  dashboard:
+  app:
+    container_name: app
+    hostname: app
     build: ./project
-    command:  flower --app=worker.celery --port=5555 --broker=redis://redis:6379/0
-    ports:
-      - 5556:5555
-    environment:
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    entrypoint: uvicorn main:app --host 0.0.0.0 --reload --port 8000
     depends_on:
-      - web
+      - rabbitmq
+    ports:
+      - 8000:8000
+    volumes:
+      - ./project:/home/datasets-api
+    restart: on-failure
+    networks:
+      - main
+
+  celery:
+    container_name: celery
+    hostname: celery
+    build: ./project
+    volumes:
+      - ./project:/home/datasets-api
+    command: celery worker -c 1 --app=worker.celery --loglevel=info --logfile=logs/celery.log
+    deploy:
+      restart_policy:
+        condition: on-failure
+      # resources:
+      #   limits:
+      #     cpus: '0.50'
+      #     memory: 50M
+      #   reservations:
+      #     cpus: '0.25'
+      #     memory: 20M
+    depends_on:
+      - rabbitmq
       - redis
-      - worker
+    restart: on-failure
+    networks:
+      - main
+
+  # flower:
+  #   container_name: flower
+  #   build: ./project
+  #   volumes:
+  #     - ./project:/home/datasets-api
+  #   command: celery --app=worker.celery flower --port=5555 --broker=amqp://rabbitmq:5672
+  #   ports:
+  #     - 5555:5555
+  #   # environment:
+  #   #   - CELERY_BROKER_URL="amqp://rabbitmq:5672"
+  #   #   - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  #   #   - TZ=Europe/Moscow
+  #   depends_on:
+  #     - app
+  #     - rabbitmq
+  #     - celery
+  #   networks:
+  #     - main
+
+networks:
+  main:
+volumes:
+  redis-data:
+  rabbitmq-data:
