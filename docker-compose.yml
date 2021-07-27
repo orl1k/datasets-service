@@ -5,24 +5,18 @@ services:
   rabbitmq:
     container_name: rabbitmq
     hostname: rabbitmq
+    image: rabbitmq:3
     volumes:
       - rabbitmq-data:/var/lib/rabbitmq
-    image: rabbitmq:3
-    ports:
-      - "5672:5672"
     restart: on-failure
-    networks:
-      - main
 
   redis:
     container_name: redis                                                            
     image: redis:6-alpine
     command: ["redis-server", "--appendonly", "yes"]
-    networks:
-      - main
     volumes:
       - redis-data:/data
-
+    
   app:
     container_name: app
     hostname: app
@@ -34,9 +28,10 @@ services:
       - 8000:8000
     volumes:
       - ./project:/home/datasets-api
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     restart: on-failure
-    networks:
-      - main
 
   celery:
     container_name: celery
@@ -45,6 +40,9 @@ services:
     volumes:
       - ./project:/home/datasets-api
     command: celery worker -c 1 --app=worker.celery --loglevel=info --logfile=logs/celery.log
+    environment:
+      - CELERY_BROKER_URL=amqp://rabbitmq:5672
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
     deploy:
       restart_policy:
         condition: on-failure
@@ -59,8 +57,6 @@ services:
       - rabbitmq
       - redis
     restart: on-failure
-    networks:
-      - main
 
   # flower:
   #   container_name: flower
@@ -81,8 +77,6 @@ services:
   #   networks:
   #     - main
 
-networks:
-  main:
 volumes:
   redis-data:
   rabbitmq-data:
