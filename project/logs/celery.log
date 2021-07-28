@@ -1,0 +1,24 @@
+[2021-07-28 09:20:59,377: INFO/ForkPoolWorker-1] Task run_script[03bd25c4-e9b6-4f3e-a866-9eb707a774b3] succeeded in 200.40797790000215s: True
+[2021-07-28 09:20:59,378: CRITICAL/MainProcess] Couldn't ack 2, reason:RecoverableConnectionError(None, 'connection already closed', None, '')
+Traceback (most recent call last):
+  File "/.venv/lib/python3.9/site-packages/kombu/message.py", line 131, in ack_log_error
+    self.ack(multiple=multiple)
+  File "/.venv/lib/python3.9/site-packages/kombu/message.py", line 126, in ack
+    self.channel.basic_ack(self.delivery_tag, multiple=multiple)
+  File "/.venv/lib/python3.9/site-packages/amqp/channel.py", line 1393, in basic_ack
+    return self.send_method(
+  File "/.venv/lib/python3.9/site-packages/amqp/abstract_channel.py", line 56, in send_method
+    raise RecoverableConnectionError('connection already closed')
+amqp.exceptions.RecoverableConnectionError: connection already closed
+[2021-07-28 09:24:19,699: INFO/ForkPoolWorker-1] Task run_script[411adceb-52d8-4873-8c4a-8b62122d14b2] succeeded in 200.32128379999995s: True
+[2021-07-28 09:24:19,701: CRITICAL/MainProcess] Couldn't ack 3, reason:RecoverableConnectionError(None, 'connection already closed', None, '')
+Traceback (most recent call last):
+  File "/.venv/lib/python3.9/site-packages/kombu/message.py", line 131, in ack_log_error
+    self.ack(multiple=multiple)
+  File "/.venv/lib/python3.9/site-packages/kombu/message.py", line 126, in ack
+    self.channel.basic_ack(self.delivery_tag, multiple=multiple)
+  File "/.venv/lib/python3.9/site-packages/amqp/channel.py", line 1393, in basic_ack
+    return self.send_method(
+  File "/.venv/lib/python3.9/site-packages/amqp/abstract_channel.py", line 56, in send_method
+    raise RecoverableConnectionError('connection already closed')
+amqp.exceptions.RecoverableConnectionError: connection already closed

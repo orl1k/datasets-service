@@ -1,21 +1,24 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
     <title>
-        Weather script
+        DatasetsAPI
     </title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.css">
     <script src="https://cdn.jsdelivr.net/npm/fomantic-ui@2.8.8/dist/semantic.min.js"></script>
-    <h1></h1>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+    <link rel="shortcut icon" href="/static/favicon.png">
 </head>
 
 <body>
-    <div class="ui container">
+    <div class="ui center aligned small container">
         {% block content %}
         {% endblock %}
     </div>
-
 </body>
 
 </html>
