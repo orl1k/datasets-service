@@ -1,0 +1,5 @@
+# Celery logs
+worker/logs/celery.log
+
+# Envfile
+.env

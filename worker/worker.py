@@ -4,7 +4,12 @@ from datetime import datetime
 from celery import Celery
 
 # celery = Celery(__name__, broker="amqp://rabbitmq:5672", backend="redis://redis:6379/0")
-celery = Celery(__name__, broker=os.environ['CELERY_BROKER_URL'], backend=os.environ['CELERY_RESULT_BACKEND'])
+celery = Celery(
+    __name__,
+    broker=f"amqp://{os.getenv('RABBITMQ_USER')}:{os.getenv('RABBITMQ_PASS')}@rabbitmq:{os.getenv('RABBITMQ_PORT')}//",
+    backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@redis:{os.getenv('REDIS_PORT_NUMBER')}/0",
+)
+
 celery.conf.update(task_track_started=True)
 
 

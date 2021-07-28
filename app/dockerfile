@@ -1,10 +1,10 @@
-FROM python:3.9.5-slim-buster as base
+FROM python:3.9.6-slim-buster AS base
+EXPOSE ${BACKEND_PORT}
 
 # Set env
-ENV LANG C.UTF-8
-ENV LC_ALL C.UTF-8
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
+ENV APP_HOME=/app
 
 
 
@@ -26,9 +26,7 @@ FROM base AS runtime
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
-
-# Create working directory
-WORKDIR /home/datasets-api
-
 # Install application into container
+WORKDIR ${APP_HOME}
 COPY . .
+RUN rm Pipfile Pipfile.lock

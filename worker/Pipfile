@@ -4,18 +4,10 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = "==0.64.0"
-uvicorn = "==0.13.4"
 numpy = "*"
 scipy = "*"
-python-multipart = "*"
 celery = "==4.4.7"
-flower = "==0.9.7"
 redis = "==3.5.3"
-aiofiles = "==0.6.0"
-pytest = "==6.2.4"
-requests = "==2.25.1"
-Jinja2 = "==2.11.3"
 
 [dev-packages]
 black = "*"
