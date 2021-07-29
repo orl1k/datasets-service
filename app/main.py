@@ -33,8 +33,9 @@ async def handle_args(
     print("-" * 100)
 
     task = celery_app.send_task("run_script", kwargs=jsonable_encoder(args))
+    response = f"<a href='{app.url_path_for('check_task', task_id=task.id)}'>Check status of {task.id} </a>"
 
-    return JSONResponse({"task_id": task.id})
+    return JSONResponse({"task_id": task.id, "task_url": response})
 
 
 @app.get("/check/{task_id}")
