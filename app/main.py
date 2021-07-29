@@ -6,11 +6,9 @@ from fastapi.encoders import jsonable_encoder
 from celery.result import AsyncResult
 import celery.states as states
 from worker import celery_app
-
-# from worker import run_script
 from models import Args
 import os
-
+import redis
 
 app = FastAPI()
 
@@ -41,10 +39,11 @@ async def handle_args(
 @app.get("/check/{task_id}")
 def check_task(task_id):
     res = celery_app.AsyncResult(task_id)
-    if res.state == states.PENDING:
-        return res.state
-    else:
-        return str(res.result)
+    return str(res.state) + " " + str(res.result)
+    # if res.state == states.PENDING:
+    #     return res.state
+    # else:
+    #     return str(res.result)
 
 
 @app.get("/health_check")
