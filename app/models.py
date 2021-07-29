@@ -1,12 +1,16 @@
 from pydantic import BaseModel
 from fastapi import Form
+import pathlib
 import inspect
 from typing import Type
+import datetime
+
 
 def as_form(cls: Type[BaseModel]):
     """
     Adds an as_form class method to decorated models. The as_form class method
     can be used with FastAPI endpoints
+    https://github.com/tiangolo/fastapi/issues/2387
     """
     new_params = [
         inspect.Parameter(
@@ -29,13 +33,20 @@ def as_form(cls: Type[BaseModel]):
 
 @as_form
 class Args(BaseModel):
-    dataset_date: str
-    rasters_path: str
-    datasets_path: str
-    icemaps_path: str
-    land_path: str
-    age: bool
-    concentrat: bool
-    age_group: bool
-    simple: bool
-    advanced: bool
+    dataset_date: datetime.date
+    rasters_path: pathlib.Path
+    datasets_path: pathlib.Path
+    icemaps_path: pathlib.Path
+    land_path: pathlib.Path
+    age: bool = True
+    concentrat: bool = True
+    age_group: bool = True
+    simple: bool = True
+    advanced: bool = True
+
+    class Config:
+        json_encoders = {
+            datetime.date: lambda x: datetime.datetime.strptime(
+                str(x), "%Y-%m-%d"
+            ).strftime("%Y%m%d"),
+        }
