@@ -3,3 +3,9 @@ worker/logs/celery.log
 
 # Envfile
 .env
+
+# Redis data
+/redis
+
+# RabbitMQ data, logs, config
+/rabbitmq

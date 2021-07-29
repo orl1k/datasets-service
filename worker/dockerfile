@@ -30,8 +30,14 @@ WORKDIR ${APP_HOME}
 
 RUN mkdir logs
 
-COPY worker.py .
+COPY tasks.py .
 COPY test.py .
 COPY ds_arrays.py .
 
-CMD celery worker -c 1 -A worker.celery --loglevel=info --logfile=logs/celery.log
+# (Prod)
+# ENTRYPOINT celery worker -c 1 -A tasks.celery_app --loglevel=info --logfile=logs/celery.log
+
+# (Dev) Hot code reloading
+# https://www.distributedpython.com/2019/04/23/celery-reload/
+RUN pip install watchdog pyyaml argh
+ENTRYPOINT watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery worker -c 1 --app=tasks.celery_app --concurrency=1 --loglevel=INFO

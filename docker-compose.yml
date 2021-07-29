@@ -5,26 +5,29 @@ services:
     container_name: app
     hostname: app
     build: ./app
+    env_file: .env
     entrypoint: uvicorn main:app --host 0.0.0.0 --reload --port ${BACKEND_PORT}
-    restart: always
     ports:
-      - "${BACKEND_PORT}:${BACKEND_PORT}"
-    # volumes:
-    #   - ./app:/app
+      - ${BACKEND_PORT}:${BACKEND_PORT}
+    volumes:
+      - ./app:/app
+    restart: always
 
   rabbitmq:
     container_name: rabbitmq
     hostname: rabbitmq
-    image: bitnami/rabbitmq:3.8
-    env_file: .env
+    image: rabbitmq:3.8
     volumes:
-      - 'rabbitmq-data:/bitnami'
+      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - rabbitmq-data:/var/lib/rabbitmq/
+      - rabbitmq-logs:/var/log/rabbitmq
     restart: always
 
   redis:
     container_name: redis
-    image: bitnami/redis:6.2
-    env_file: .env
+    hostname: redis
+    image: redis:6-alpine
+    command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
       - redis-data:/data
     restart: always
@@ -33,33 +36,27 @@ services:
     container_name: worker
     hostname: worker
     build: ./worker
+    env_file: .env
     volumes:
       - ./worker:/worker
-    env_file: .env
     depends_on:
       - rabbitmq
       - redis
     restart: always
 
-  # flower:
-  #   container_name: flower
-  #   build: ./project
-  #   volumes:
-  #     - ./project:/home/datasets-api
-  #   command: celery --app=worker.celery flower --port=5555 --broker=amqp://rabbitmq:5672
-  #   ports:
-  #     - 5555:5555
-  #   # environment:
-  #   #   - CELERY_BROKER_URL="amqp://rabbitmq:5672"
-  #   #   - CELERY_RESULT_BACKEND=redis://redis:6379/0
-  #   #   - TZ=Europe/Moscow
-  #   depends_on:
-  #     - app
-  #     - rabbitmq
-  #     - celery
-  #   networks:
-  #     - main
+  monitor:
+    build: ./worker
+    ports:
+      - 5555:5555
+    entrypoint: flower
+    env_file: .env
+    command:  -A tasks --port=5555 --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
+    depends_on:
+      - redis
+    volumes: 
+      - ./worker:/queue
 
 volumes:
   redis-data:
   rabbitmq-data:
+  rabbitmq-logs:

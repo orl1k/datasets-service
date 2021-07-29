@@ -31,16 +31,19 @@
         </div>
     </div>
 
-    <!-- <div class="ui error message">
-        <ul class="list">
-            <li>Special Field must have a value</li>
-        </ul>
-    </div> -->
-
     <script type="text/javascript">
         $('#dataset_calendar')
             .calendar({
-                type: 'date'
+                type: 'date',
+                formatter: {
+                    date: function (date, settings) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
             })
             ;
 
@@ -181,7 +184,6 @@
             })
             ;
     </script>
-    <!-- <button class="ui primary button" type="submit" tabindex="1">Start script</button> -->
 
     <script>
         $(document).ready(function () {
@@ -226,21 +228,6 @@
             });
         })
     </script>
-
-    <!-- <script>
-        $("#submit").click(function () {
-
-            $('body')
-                .toast({
-                    title: 'LOOK',
-                    message: 'See, how long i will last',
-                    showProgress: 'bottom',
-                    progressUp: true
-                });
-        });
-    </script> -->
-
-
 
 </form>
 
