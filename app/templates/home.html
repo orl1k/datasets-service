@@ -134,7 +134,6 @@
     </div>
 
 
-
     <script>
         $('.ui.form')
             .form({
@@ -234,6 +233,43 @@
     </script>
 
 </form>
+<table class="ui very basic collapsing celled table" id="task_table">
+    <thead>
+        <tr>
+            <th class="center aligned">Task ID</th>
+            <th class="center aligned">State</th>
+            <th class="center aligned">Params</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td class="center aligned">{{ task['task_id'] }}</td>
+            <td class="center aligned  {{ task['class'] }}"><i class="icon {{ task['icon'] }}"></i> {{ task['state'] }}
+            <td class="center aligned">{{ task['info'] }}</td>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="ui hidden divider"></div>
+<!-- Refresh button -->
+<!-- <button class="ui massive button" id='refresh-btn'>
+    <i class="sync alternate icon"></i>
+    Refresh
+</button> -->
 
+<script>
+    function RefreshTable() {
+        $("#task_table").load("/ #task_table");
+    }
+
+    setInterval(function () {
+        RefreshTable();
+    }, 1000);
+
+    // For refresh button
+    // $("#refresh-btn").on("click", RefreshTable);
+</script>
 
 {% endblock %}

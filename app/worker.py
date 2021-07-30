@@ -7,3 +7,5 @@ celery_app = Celery(
     broker=f"amqp://{os.getenv('RABBITMQ_USERNAME')}:{os.getenv('RABBITMQ_PASSWORD')}@rabbitmq:{os.getenv('RABBITMQ_NODE_PORT_NUMBER')}//",
     backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@redis:6379/0",
 )
+
+celery_app.conf.update(result_extended=True)

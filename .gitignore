@@ -9,3 +9,6 @@ worker/logs/celery.log
 
 # RabbitMQ data, logs, config
 /rabbitmq
+
+# Task queue data
+/app/task_queue.pickle

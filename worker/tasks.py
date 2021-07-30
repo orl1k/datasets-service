@@ -10,6 +10,8 @@ celery_app = Celery(
     backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@redis:6379/0",
 )
 
+celery_app.conf.update(result_extended=True)
+
 
 @celery_app.task(name="run_script", acks_late=True)
 def run_script(**kwargs):
