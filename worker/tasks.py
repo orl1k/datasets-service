@@ -10,6 +10,10 @@ celery_app = Celery(
     backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@redis:6379/0",
 )
 
+celery_app.conf.task_queue_max_priority = 10
+celery_app.conf.task_default_priority = 5
+celery_app.conf.update(result_extended=True)
+
 
 @celery_app.task(name="run_script", acks_late=True)
 def run_script(**kwargs):

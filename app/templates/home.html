@@ -87,41 +87,74 @@
 
     <div class="ui top attached three column center aligned divided grid segment">
         <div class="column">
-            <div class="ui test checkbox">
-                <input type="checkbox" name="age" checked="checked">
+            <div class="ui checkbox">
+                <input type="hidden" name="age" value="1"><input type="checkbox" checked="checked"
+                    onclick="this.previousSibling.value=1-this.previousSibling.value">
                 <label>age</label>
             </div>
         </div>
         <div class="column">
-            <div class="ui test checkbox">
-                <input type="checkbox" name="concentrat" checked="checked">
+            <div class="ui checkbox">
+                <input type="hidden" name="concentrat" value="1"><input type="checkbox" checked="checked"
+                    onclick="this.previousSibling.value=1-this.previousSibling.value">
                 <label>concentrat</label>
             </div>
         </div>
         <div class="column">
-            <div class="ui test checkbox">
-                <input type="checkbox" name="age_group" checked="checked">
+            <div class="ui checkbox">
+                <input type="hidden" name="age_group" value="1"><input type="checkbox" checked="checked"
+                    onclick="this.previousSibling.value=1-this.previousSibling.value">
                 <label>age_group</label>
             </div>
         </div>
     </div>
     <div class="ui top attached three column center aligned divided grid segment">
         <div class="column">
-            <div class="ui test checkbox">
-                <input type="checkbox" name="advanced" checked="checked">
+            <div class="ui checkbox">
+                <input type="hidden" name="advanced" value="1"><input type="checkbox" checked="checked"
+                    onclick="this.previousSibling.value=1-this.previousSibling.value">
                 <label>advanced</label>
             </div>
         </div>
         <div class="column">
-            <div class="ui test checkbox">
-                <input type="checkbox" name="simple" checked="checked">
+            <div class="ui checkbox">
+                <input type="hidden" name="simple" value="1"><input type="checkbox" checked="checked"
+                    onclick="this.previousSibling.value=1-this.previousSibling.value">
                 <label>simple</label>
             </div>
         </div>
     </div>
+
+    <h2 class="ui dividing header">
+        <i class="exclamation icon"></i>
+        <div class="content">
+            Priority
+        </div>
+    </h2>
+
     <div class="ui hidden divider"></div>
 
-    <!-- <div class="ui centered grid"> -->
+    <div class="ui labeled slider" id="task_priority_slider"></div>
+    <div class="ui input">
+        <input id="task_priority" type="hidden" value="5" name="task_priority">
+    </div>
+
+    <script>
+        $('.ui.slider')
+            .slider({
+                min: 0,
+                max: 10,
+                start: 5,
+                step: 1,
+                onChange: function () {
+                    $("#task_priority")
+                        .val(
+                            $(this).slider('get value')
+                        )
+                }
+            });
+    </script>
+
     <div class="ui basic segment center aligned">
         <button class="ui massive animated button" type="submit" id="submit" tabindex="0">
             <div class="visible content">Start script</div>
@@ -129,6 +162,9 @@
                 <i class="angle double right icon"></i>
             </div>
         </button>
+        <a href="http://127.0.0.1:5555/" class="ui small image">
+            <img src="/static/celery_icon.png">
+        </a>
     </div>
 
     <script>
@@ -230,6 +266,43 @@
     </script>
 
 </form>
+<table class="ui very basic collapsing celled table" id="task_table">
+    <thead>
+        <tr>
+            <th class="center aligned">Task ID</th>
+            <th class="center aligned">State</th>
+            <th class="center aligned">Params</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for task in tasks %}
+        <tr>
+            <td class="center aligned">{{ task['task_id'] }}</td>
+            <td class="center aligned  {{ task['class'] }}"><i class="icon {{ task['icon'] }}"></i> {{ task['state'] }}
+            <td class="center aligned">{{ task['info'] }}</td>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<div class="ui hidden divider"></div>
+<!-- Refresh button -->
+<!-- <button class="ui massive button" id='refresh-btn'>
+    <i class="sync alternate icon"></i>
+    Refresh
+</button> -->
 
+<script>
+    function RefreshTable() {
+        $("#task_table").load("/ #task_table");
+    }
+
+    setInterval(function () {
+        RefreshTable();
+    }, 20000);
+
+    // For refresh button
+    // $("#refresh-btn").on("click", RefreshTable);
+</script>
 
 {% endblock %}
