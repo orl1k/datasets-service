@@ -31,24 +31,6 @@
         </div>
     </div>
 
-    <script type="text/javascript">
-        $('#dataset_calendar')
-            .calendar({
-                type: 'date',
-                formatter: {
-                    date: function (date, settings) {
-                        if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
-                    }
-                }
-            })
-            ;
-
-    </script>
-
     <h2 class="ui dividing header">
         <i class="folder outline icon"></i>
         <div class="content">
@@ -108,6 +90,7 @@
             </div>
         </div>
     </div>
+
     <div class="ui top attached three column center aligned divided grid segment">
         <div class="column">
             <div class="ui checkbox">
@@ -139,22 +122,6 @@
         <input id="task_priority" type="hidden" value="5" name="task_priority">
     </div>
 
-    <script>
-        $('.ui.slider')
-            .slider({
-                min: 0,
-                max: 10,
-                start: 5,
-                step: 1,
-                onChange: function () {
-                    $("#task_priority")
-                        .val(
-                            $(this).slider('get value')
-                        )
-                }
-            });
-    </script>
-
     <div class="ui basic segment center aligned">
         <button class="ui massive animated button" type="submit" id="submit" tabindex="0">
             <div class="visible content">Start script</div>
@@ -166,106 +133,8 @@
             <img src="/static/celery_icon.png">
         </a>
     </div>
-
-    <script>
-        $('.ui.form')
-            .form({
-                fields: {
-                    dataset_date: {
-                        identifier: 'dataset_date',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a dataset date'
-                            }
-                        ]
-                    },
-                    rasters_path: {
-                        identifier: 'rasters_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a rasters path'
-                            }
-                        ]
-                    },
-                    datasets_path: {
-                        identifier: 'datasets_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a datasets path'
-                            }
-                        ]
-                    },
-                    icemaps_path: {
-                        identifier: 'icemaps_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a icemaps path'
-                            }
-                        ]
-                    },
-                    land_path: {
-                        identifier: 'land_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a earth shape path'
-                            }
-                        ]
-                    },
-                }
-            })
-            ;
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $("#submit").click(function (e) {
-                e.preventDefault();
-                var form = $(this).parents("form:first");
-                $.ajax({
-                    type: 'POST',
-                    url: '/script',
-                    data: form.serialize(),
-                    success: function (response) {
-                        $('body')
-                            .toast({
-                                title: 'SUCCESS',
-                                class: 'success',
-                                message: 'Script started with task id: ' + response['task_id'] + ' ' + response['task_url'],
-                                showProgress: 'bottom',
-                                progressUp: true,
-                                position: 'top attached',
-                                transition: {
-                                    showMethod: 'fade down',
-                                    hideMethod: 'fade down',
-                                }
-                            });
-                    },
-                    error: function (response) {
-                        $('body')
-                            .toast({
-                                title: 'ERROR',
-                                class: 'error',
-                                message: 'Script not started',
-                                showProgress: 'bottom',
-                                progressUp: true,
-                                position: 'top attached',
-                                transition: {
-                                    showMethod: 'fade down',
-                                    hideMethod: 'fade down',
-                                }
-                            });
-                    }
-                });
-            });
-        })
-    </script>
-
 </form>
+
 <table class="ui very basic collapsing celled table" id="task_table">
     <thead>
         <tr>
@@ -285,7 +154,6 @@
         {% endfor %}
     </tbody>
 </table>
-<div class="ui hidden divider"></div>
 
 <!-- Refresh button -->
 <!-- <button class="ui massive button" id='refresh-btn'>
@@ -293,17 +161,10 @@
     Refresh
 </button> -->
 
-<script>
-    function RefreshTable() {
-        $("#task_table").load("/ #task_table");
-    }
+<div class="ui hidden divider"></div>
 
-    setInterval(function () {
-        RefreshTable();
-    }, 5000);
+{% endblock %}
 
-    // For refresh button
-    // $("#refresh-btn").on("click", RefreshTable);
-</script>
-
+{% block scripts %}
+{{ super() }}
 {% endblock %}
