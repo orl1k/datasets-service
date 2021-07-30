@@ -1,7 +1,7 @@
 import os
 import time
-from celery import Celery
 from datetime import datetime
+from celery import Celery
 
 
 celery_app = Celery(
