@@ -41,7 +41,11 @@ async def handle_args(
     print(jsonable_encoder(args))
     print("-" * 100)
 
-    task = celery_app.send_task("run_script", kwargs=jsonable_encoder(args))
+    task = celery_app.send_task(
+        "run_script",
+        kwargs=jsonable_encoder(args),
+        priority=args.task_priority,
+    )
     task_queue.append(task.id)
     response = f"<a href='{app.url_path_for('check_task', task_id=task.id)}'>Check status of {task.id} </a>"
 

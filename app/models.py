@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from fastapi import Form
 import pathlib
 import inspect
@@ -31,6 +31,9 @@ def as_form(cls: Type[BaseModel]):
     return cls
 
 
+bool_handler = {}
+
+
 @as_form
 class Args(BaseModel):
     dataset_date: datetime.date
@@ -43,6 +46,7 @@ class Args(BaseModel):
     age_group: bool = True
     simple: bool = True
     advanced: bool = True
+    task_priority: int = 5
 
     class Config:
         json_encoders = {
