@@ -2,9 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>
-        DatasetsAPI
-    </title>
+    <title>DatasetsAPI</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
@@ -126,7 +124,7 @@
                             .toast({
                                 title: 'SUCCESS',
                                 class: 'success',
-                                message: 'Script started with task id: ' + response['task_id'] + ' ' + response['task_url'],
+                                message: 'Script started with task id: ' + response['task_id'],
                                 showProgress: 'bottom',
                                 progressUp: true,
                                 position: 'top attached',
@@ -141,7 +139,7 @@
                             .toast({
                                 title: 'ERROR',
                                 class: 'error',
-                                message: 'Script not started',
+                                message: 'Script not started. Error message: ' + response.responseJSON.detail[0].msg,
                                 showProgress: 'bottom',
                                 progressUp: true,
                                 position: 'top attached',

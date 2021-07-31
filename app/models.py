@@ -31,9 +31,6 @@ def as_form(cls: Type[BaseModel]):
     return cls
 
 
-bool_handler = {}
-
-
 @as_form
 class Args(BaseModel):
     dataset_date: datetime.date
