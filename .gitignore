@@ -12,3 +12,6 @@ worker/logs/celery.log
 
 # Task queue data
 /app/task_queue.pickle
+
+# Python cache
+__pycache__
