@@ -35,6 +35,7 @@ async def home(request: Request) -> templates.TemplateResponse:
 async def handle_args(
     request: Request,
     args: ScriptArgs = Depends(ScriptArgs.as_form),
+    response_model=TaskItem,
 ) -> JSONResponse:
 
     json_kwargs = jsonable_encoder(args)
@@ -43,15 +44,15 @@ async def handle_args(
         kwargs=json_kwargs,
         priority=args.task_priority,
     )
+    task_item = TaskItem(task.id, json_kwargs)
 
     print("-" * 100)
-    print(json_kwargs)
+    print(task_item.kwargs)
     print("-" * 100)
 
-    task_queue.appendleft(TaskItem(task.id, json_kwargs))
-    response = f"<a href='{app.url_path_for('check_task', task_id=task.id)}'>Check status of {task.id} </a>"
+    task_queue.appendleft(task_item)
 
-    return JSONResponse({"task_id": task.id, "task_url": response})
+    return task_item
 
 
 @app.get("/check/{task_id}")
