@@ -55,6 +55,7 @@ services:
       - redis
     volumes: 
       - ./worker:/queue
+    restart: always
 
 volumes:
   redis-data:

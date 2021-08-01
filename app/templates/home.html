@@ -3,7 +3,9 @@
 {% block content %}
 
 <form class="ui form error">
+
     <div class="ui hidden divider"></div>
+
     <h1 class="ui center aligned icon header ">
         <i class="file alternate outline icon"></i>
         <div class="content">
@@ -11,6 +13,7 @@
             <div class="sub header">Enter script arguments and run the script</div>
         </div>
     </h1>
+
     <div class="ui hidden divider"></div>
 
     <h2 class="ui dividing header ">
@@ -30,24 +33,6 @@
             </div>
         </div>
     </div>
-
-    <script type="text/javascript">
-        $('#dataset_calendar')
-            .calendar({
-                type: 'date',
-                formatter: {
-                    date: function (date, settings) {
-                        if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
-                    }
-                }
-            })
-            ;
-
-    </script>
 
     <h2 class="ui dividing header">
         <i class="folder outline icon"></i>
@@ -88,39 +73,40 @@
     <div class="ui top attached three column center aligned divided grid segment">
         <div class="column">
             <div class="ui checkbox">
-                <input type="hidden" name="age" value="1"><input type="checkbox" checked="checked"
+                <input type="hidden" name="age" value="1"><input type="checkbox" checked="checked" id="age"
                     onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <label>age</label>
+                <label for="age">age</label>
             </div>
         </div>
         <div class="column">
             <div class="ui checkbox">
                 <input type="hidden" name="concentrat" value="1"><input type="checkbox" checked="checked"
-                    onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <label>concentrat</label>
+                    id="concentrat" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                <label for="concentrat">concentrat</label>
             </div>
         </div>
         <div class="column">
             <div class="ui checkbox">
-                <input type="hidden" name="age_group" value="1"><input type="checkbox" checked="checked"
+                <input type="hidden" name="age_group" value="1"><input type="checkbox" checked="checked" id="age_group"
                     onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <label>age_group</label>
+                <label for="age_group">age group</label>
             </div>
         </div>
     </div>
-    <div class="ui top attached three column center aligned divided grid segment">
+
+    <div class="ui top attached two column center aligned divided grid segment">
         <div class="column">
             <div class="ui checkbox">
-                <input type="hidden" name="advanced" value="1"><input type="checkbox" checked="checked"
+                <input type="hidden" name="advanced" value="1"><input type="checkbox" checked="checked" id="advanced"
                     onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <label>advanced</label>
+                <label for="advanced">advanced</label>
             </div>
         </div>
         <div class="column">
             <div class="ui checkbox">
-                <input type="hidden" name="simple" value="1"><input type="checkbox" checked="checked"
+                <input type="hidden" name="simple" value="1"><input type="checkbox" checked="checked" id="simple"
                     onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <label>simple</label>
+                <label for="simple">simple</label>
             </div>
         </div>
     </div>
@@ -139,133 +125,19 @@
         <input id="task_priority" type="hidden" value="5" name="task_priority">
     </div>
 
-    <script>
-        $('.ui.slider')
-            .slider({
-                min: 0,
-                max: 10,
-                start: 5,
-                step: 1,
-                onChange: function () {
-                    $("#task_priority")
-                        .val(
-                            $(this).slider('get value')
-                        )
-                }
-            });
-    </script>
-
     <div class="ui basic segment center aligned">
-        <button class="ui massive animated button" type="submit" id="submit" tabindex="0">
+        <button class="ui huge animated button" type="submit" id="submit" tabindex="0">
             <div class="visible content">Start script</div>
             <div class="hidden content">
                 <i class="angle double right icon"></i>
             </div>
         </button>
-        <a href="http://127.0.0.1:5555/" class="ui small image">
+        <a href="/flower" class="ui tiny image">
             <img src="/static/celery_icon.png">
         </a>
     </div>
-
-    <script>
-        $('.ui.form')
-            .form({
-                fields: {
-                    dataset_date: {
-                        identifier: 'dataset_date',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a dataset date'
-                            }
-                        ]
-                    },
-                    rasters_path: {
-                        identifier: 'rasters_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a rasters path'
-                            }
-                        ]
-                    },
-                    datasets_path: {
-                        identifier: 'datasets_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a datasets path'
-                            }
-                        ]
-                    },
-                    icemaps_path: {
-                        identifier: 'icemaps_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a icemaps path'
-                            }
-                        ]
-                    },
-                    land_path: {
-                        identifier: 'land_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a earth shape path'
-                            }
-                        ]
-                    },
-                }
-            })
-            ;
-    </script>
-
-    <script>
-        $(document).ready(function () {
-            $("#submit").click(function (e) {
-                e.preventDefault();
-                var form = $(this).parents("form:first");
-                $.ajax({
-                    type: 'POST',
-                    url: '/script',
-                    data: form.serialize(),
-                    success: function (response) {
-                        $('body')
-                            .toast({
-                                title: 'SUCCESS',
-                                class: 'success',
-                                message: 'Script started with task id: ' + response['task_id'] + ' ' + response['task_url'],
-                                showProgress: 'bottom',
-                                progressUp: true,
-                                position: 'top attached',
-                                transition: {
-                                    showMethod: 'fade down',
-                                    hideMethod: 'fade down',
-                                }
-                            });
-                    },
-                    error: function (response) {
-                        $('body')
-                            .toast({
-                                title: 'ERROR',
-                                class: 'error',
-                                message: 'Script not started',
-                                showProgress: 'bottom',
-                                progressUp: true,
-                                position: 'top attached',
-                                transition: {
-                                    showMethod: 'fade down',
-                                    hideMethod: 'fade down',
-                                }
-                            });
-                    }
-                });
-            });
-        })
-    </script>
-
 </form>
+
 <table class="ui very basic collapsing celled table" id="task_table">
     <thead>
         <tr>
@@ -277,32 +149,27 @@
     <tbody>
         {% for task in tasks %}
         <tr>
-            <td class="center aligned">{{ task['task_id'] }}</td>
-            <td class="center aligned  {{ task['class'] }}"><i class="icon {{ task['icon'] }}"></i> {{ task['state'] }}
-            <td class="center aligned">{{ task['info'] }}</td>
+            {% set state = task.state %}
+            <td class="center aligned">{{ task.id }}</td>
+            <td class="center aligned  {{ state.state_class }}">
+                <i class="icon {{ state.icon }}"></i> {{ state.name }}
             </td>
+            <td class="center aligned">{{ task.kwargs }}</td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
-<div class="ui hidden divider"></div>
+
 <!-- Refresh button -->
 <!-- <button class="ui massive button" id='refresh-btn'>
     <i class="sync alternate icon"></i>
     Refresh
 </button> -->
 
-<script>
-    function RefreshTable() {
-        $("#task_table").load("/ #task_table");
-    }
+<div class="ui hidden divider"></div>
 
-    setInterval(function () {
-        RefreshTable();
-    }, 20000);
+{% endblock %}
 
-    // For refresh button
-    // $("#refresh-btn").on("click", RefreshTable);
-</script>
-
+{% block scripts %}
+{{ super() }}
 {% endblock %}
