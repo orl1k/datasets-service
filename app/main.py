@@ -15,7 +15,7 @@ import os
 app = FastAPI()
 
 task_queue = deque(maxlen=10)
-# task_queue_file = "task_queue.pickle"
+task_queue_file = "task_queue.pickle"
 # if os.path.exists(task_queue_file):
 #     with open(task_queue_file, "rb") as f:
 #         task_queue = pickle.load(f)
@@ -55,14 +55,8 @@ async def handle_args(
     return task_item
 
 
-@app.get("/check/{task_id}")
-def check_task(task_id):
-    res = celery_app.AsyncResult(task_id)
-    return JSONResponse(str(res.state) + " " + str(res.result))
-
-
 @app.get("/flower")
-def flower(request: Request):
+def flower_redirect(request: Request):
     redirect_url = str(request.base_url)
     redirect_url = redirect_url.replace(
         str(request.base_url.port), os.getenv("FLOWER_PORT")
@@ -72,7 +66,7 @@ def flower(request: Request):
 
 @app.get("/health_check")
 def health_check():
-    return JSONResponse("OK")
+    return JSONResponse({"healthcheck": "OK"})
 
 
 # @app.on_event("startup")
