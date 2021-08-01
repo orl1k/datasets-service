@@ -61,9 +61,11 @@ def check_task(task_id):
 
 
 @app.get("/flower")
-def health_check(request: Request):
+def flower(request: Request):
     redirect_url = str(request.base_url)
-    redirect_url = redirect_url.replace(str(request.base_url.port), "5555")
+    redirect_url = redirect_url.replace(
+        str(request.base_url.port), os.getenv("FLOWER_PORT")
+    )
     return RedirectResponse(redirect_url)
 
 

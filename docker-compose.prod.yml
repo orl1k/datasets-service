@@ -43,9 +43,9 @@ services:
   monitor:
     build: ./worker
     ports:
-      - 5555:5555
+      - ${FLOWER_PORT}:${FLOWER_PORT}
     entrypoint: flower
     env_file: .env
-    command:  -A tasks --port=5555 --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
+    command:  -A tasks --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
