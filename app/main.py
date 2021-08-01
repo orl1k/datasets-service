@@ -33,7 +33,6 @@ async def home(request: Request) -> templates.TemplateResponse:
 async def handle_args(
     request: Request,
     args: ScriptArgs = Depends(ScriptArgs.as_form),
-    response_model=TaskItem,
 ) -> JSONResponse:
 
     args_dict = args.dict()
@@ -43,14 +42,13 @@ async def handle_args(
         priority=args.task_priority,
     )
     task_item = TaskItem(task.id, args_dict)
-
-    print("-" * 100)
-    print(task_item.kwargs)
-    print("-" * 100)
-
     task_queue.appendleft(task_item)
 
-    return task_item
+    print("-" * 100)
+    print(task_item)
+    print("-" * 100)
+
+    return JSONResponse({"task_id": task_item.id})
 
 
 @app.get("/flower")

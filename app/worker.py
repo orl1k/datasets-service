@@ -22,10 +22,12 @@ class TaskItem:
 
     @property
     def state(self):
-        return State(self.id)
+        return TaskState(celery_app.AsyncResult(self.id).state)
 
 
-class State:
+@dataclass(frozen=True)
+class TaskState:
+    name: str
     icon_mapping: ClassVar[dict] = {
         states.SUCCESS: "checkmark",
         states.PENDING: "history",
@@ -37,17 +39,10 @@ class State:
         states.FAILURE: "error",
     }
 
-    def __init__(self, task_id):
-        self.__name = celery_app.AsyncResult(task_id).state
-
-    @property
-    def name(self):
-        return self.__name
-
     @property
     def icon(self):
-        return self.icon_mapping[self.__name]
+        return self.icon_mapping[self.name]
 
     @property
     def state_class(self):
-        return self.state_class_mapping[self.__name]
+        return self.state_class_mapping[self.name]
