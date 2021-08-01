@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 from celery.result import AsyncResult
 
-from worker import celery_app, get_tasks
+from worker import celery_app, TaskItem
 from models import ScriptArgs
 
 from collections import deque
@@ -15,10 +15,10 @@ import os
 app = FastAPI()
 
 task_queue = deque(maxlen=10)
-task_queue_file = "task_queue.pickle"
-if os.path.exists(task_queue_file):
-    with open(task_queue_file, "rb") as f:
-        task_queue = pickle.load(f)
+# task_queue_file = "task_queue.pickle"
+# if os.path.exists(task_queue_file):
+#     with open(task_queue_file, "rb") as f:
+#         task_queue = pickle.load(f)
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -27,7 +27,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def home(request: Request) -> templates.TemplateResponse:
     return templates.TemplateResponse(
-        "home.html", {"request": request, "tasks": get_tasks(task_queue)}
+        "home.html", {"request": request, "tasks": task_queue}
     )
 
 
@@ -38,17 +38,17 @@ async def handle_args(
 ) -> JSONResponse:
 
     json_kwargs = jsonable_encoder(args)
-
-    print("-" * 100)
-    print(json_kwargs)
-    print("-" * 100)
-
     task = celery_app.send_task(
         "run_script",
         kwargs=json_kwargs,
         priority=args.task_priority,
     )
-    task_queue.append((task.id, json_kwargs))
+
+    print("-" * 100)
+    print(json_kwargs)
+    print("-" * 100)
+
+    task_queue.appendleft(TaskItem(task.id, json_kwargs))
     response = f"<a href='{app.url_path_for('check_task', task_id=task.id)}'>Check status of {task.id} </a>"
 
     return JSONResponse({"task_id": task.id, "task_url": response})

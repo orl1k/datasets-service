@@ -149,10 +149,11 @@
     <tbody>
         {% for task in tasks %}
         <tr>
-            <td class="center aligned">{{ task['task_id'] }}</td>
-            <td class="center aligned  {{ task['class'] }}"><i class="icon {{ task['icon'] }}"></i> {{ task['state'] }}
-            <td class="center aligned">{{ task['info'] }}</td>
+            <td class="center aligned">{{ task.id }}</td>
+            <td class="center aligned  {{ task.state_class }}">
+                <i class="icon {{ task.icon }}"></i> {{ task.state }}
             </td>
+            <td class="center aligned">{{ task.kwargs }}</td>
         </tr>
         {% endfor %}
     </tbody>

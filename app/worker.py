@@ -1,15 +1,8 @@
 import os
 from celery import Celery, states
 from collections import deque
-
-check_icon = {
-    states.SUCCESS: "checkmark",
-    states.PENDING: "history",
-}
-check_class = {
-    states.SUCCESS: "positive",
-    states.PENDING: "warning",
-}
+from dataclasses import dataclass
+from typing import ClassVar
 
 celery_app = Celery(
     os.getenv("CELERY_APP_NAME"),
@@ -22,17 +15,27 @@ celery_app.conf.task_default_priority = 5
 celery_app.conf.update(result_extended=True)
 
 
-def get_tasks(task_queue: deque) -> list[dict]:
-    tasks = []
-    for task_id, kwargs in reversed(task_queue):
-        res = celery_app.AsyncResult(task_id)
-        tasks.append(
-            {
-                "task_id": task_id,
-                "info": kwargs,
-                "state": res.state,
-                "class": check_class[res.state],
-                "icon": check_icon[res.state],
-            }
-        )
-    return tasks
+@dataclass(frozen=True)
+class TaskItem:
+    id: str
+    kwargs: dict
+    icon_mapping: ClassVar[dict] = {
+        states.SUCCESS: "checkmark",
+        states.PENDING: "history",
+    }
+    state_class_mapping: ClassVar[dict] = {
+        states.SUCCESS: "positive",
+        states.PENDING: "warning",
+    }
+
+    @property
+    def state(self):
+        return celery_app.AsyncResult(self.id).state
+
+    @property
+    def icon(self):
+        return self.icon_mapping[self.state]
+
+    @property
+    def state_class(self):
+        return self.state_class_mapping[self.state]
