@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 from fastapi.encoders import jsonable_encoder
 from celery.result import AsyncResult
@@ -58,6 +58,13 @@ async def handle_args(
 def check_task(task_id):
     res = celery_app.AsyncResult(task_id)
     return JSONResponse(str(res.state) + " " + str(res.result))
+
+
+@app.get("/flower")
+def health_check(request: Request):
+    redirect_url = str(request.base_url)
+    redirect_url = redirect_url.replace(str(request.base_url.port), "5555")
+    return RedirectResponse(redirect_url)
 
 
 @app.get("/health_check")
