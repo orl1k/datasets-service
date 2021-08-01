@@ -49,3 +49,5 @@ services:
     command:  -A tasks --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
+    restart: always
+    

@@ -32,7 +32,7 @@ def as_form(cls: Type[BaseModel]):
 
 
 @as_form
-class Args(BaseModel):
+class ScriptArgs(BaseModel):
     dataset_date: datetime.date
     rasters_path: pathlib.Path
     datasets_path: pathlib.Path

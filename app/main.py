@@ -6,7 +6,7 @@ from fastapi.encoders import jsonable_encoder
 from celery.result import AsyncResult
 
 from worker import celery_app, get_tasks
-from models import Args
+from models import ScriptArgs
 
 from collections import deque
 import pickle
@@ -34,7 +34,7 @@ async def home(request: Request) -> templates.TemplateResponse:
 @app.post("/script", status_code=201)
 async def handle_args(
     request: Request,
-    args: Args = Depends(Args.as_form),
+    args: ScriptArgs = Depends(ScriptArgs.as_form),
 ) -> JSONResponse:
 
     json_kwargs = jsonable_encoder(args)
