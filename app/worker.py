@@ -22,10 +22,12 @@ class TaskItem:
     icon_mapping: ClassVar[dict] = {
         states.SUCCESS: "checkmark",
         states.PENDING: "history",
+        states.FAILURE: "times",
     }
     state_class_mapping: ClassVar[dict] = {
         states.SUCCESS: "positive",
         states.PENDING: "warning",
+        states.FAILURE: "error",
     }
 
     @property

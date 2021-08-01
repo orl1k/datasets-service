@@ -2,8 +2,6 @@ from fastapi import FastAPI, Request, Depends
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
-from fastapi.encoders import jsonable_encoder
-from celery.result import AsyncResult
 
 from worker import celery_app, TaskItem
 from models import ScriptArgs
@@ -38,13 +36,13 @@ async def handle_args(
     response_model=TaskItem,
 ) -> JSONResponse:
 
-    json_kwargs = jsonable_encoder(args)
+    args_dict = args.dict()
     task = celery_app.send_task(
         "run_script",
-        kwargs=json_kwargs,
+        kwargs=args_dict,
         priority=args.task_priority,
     )
-    task_item = TaskItem(task.id, json_kwargs)
+    task_item = TaskItem(task.id, args_dict)
 
     print("-" * 100)
     print(task_item.kwargs)

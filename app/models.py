@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, FilePath, DirectoryPath
 from fastapi import Form
 import pathlib
 import inspect
@@ -34,20 +34,17 @@ def as_form(cls: Type[BaseModel]):
 @as_form
 class ScriptArgs(BaseModel):
     dataset_date: datetime.date
-    rasters_path: pathlib.Path
-    datasets_path: pathlib.Path
-    icemaps_path: pathlib.Path
-    land_path: pathlib.Path
+    rasters_path: str
+    datasets_path: str
+    icemaps_path: str
+    land_path: str
+    # rasters_path: DirectoryPath
+    # datasets_path: DirectoryPath
+    # icemaps_path: DirectoryPath
+    # land_path: FilePath
     age: bool = True
     concentrat: bool = True
     age_group: bool = True
     simple: bool = True
     advanced: bool = True
     task_priority: int = 5
-
-    class Config:
-        json_encoders = {
-            datetime.date: lambda x: datetime.datetime.strptime(
-                str(x), "%Y-%m-%d"
-            ).strftime("%Y%m%d"),
-        }

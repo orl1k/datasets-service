@@ -29,9 +29,10 @@ def run_script(**kwargs):
 
     # Parse dict -> cli command
     script_string = "python test.py" + "".join(
-        [f" --{x} {str(y)}" for x, y in kwargs.items()]
+        [f" --{x} {str(y)}" if y else "" for x, y in kwargs.items()]
     )
 
+    print(f"script_string=")
     os.system(script_string)
 
     return True
