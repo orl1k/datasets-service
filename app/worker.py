@@ -19,6 +19,13 @@ celery_app.conf.update(result_extended=True)
 class TaskItem:
     id: str
     kwargs: dict
+
+    @property
+    def state(self):
+        return State(self.id)
+
+
+class State:
     icon_mapping: ClassVar[dict] = {
         states.SUCCESS: "checkmark",
         states.PENDING: "history",
@@ -30,14 +37,17 @@ class TaskItem:
         states.FAILURE: "error",
     }
 
+    def __init__(self, task_id):
+        self.__name = celery_app.AsyncResult(task_id).state
+
     @property
-    def state(self):
-        return celery_app.AsyncResult(self.id).state
+    def name(self):
+        return self.__name
 
     @property
     def icon(self):
-        return self.icon_mapping[self.state]
+        return self.icon_mapping[self.__name]
 
     @property
     def state_class(self):
-        return self.state_class_mapping[self.state]
+        return self.state_class_mapping[self.__name]

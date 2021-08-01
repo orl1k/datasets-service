@@ -149,9 +149,10 @@
     <tbody>
         {% for task in tasks %}
         <tr>
+            {% set state = task.state %}
             <td class="center aligned">{{ task.id }}</td>
-            <td class="center aligned  {{ task.state_class }}">
-                <i class="icon {{ task.icon }}"></i> {{ task.state }}
+            <td class="center aligned  {{ state.state_class }}">
+                <i class="icon {{ state.icon }}"></i> {{ state.name }}
             </td>
             <td class="center aligned">{{ task.kwargs }}</td>
         </tr>
