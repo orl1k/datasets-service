@@ -32,7 +32,7 @@ def run_script(**kwargs):
         [f" --{x} {str(y)}" if y else "" for x, y in kwargs.items()]
     )
 
-    print(f"script_string=")
+    print(f"{script_string=}")
     os.system(script_string)
 
     return True
