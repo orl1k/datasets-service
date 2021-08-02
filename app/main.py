@@ -34,6 +34,17 @@ async def handle_args(
     request: Request,
     args: ScriptArgs = Depends(ScriptArgs.as_form),
 ) -> JSONResponse:
+    """
+    Выберите аргументы скрипта сборки датасета:
+    - **dataset_date**: дата, за которую будет собран датасет
+    - **rasters_path**: директория, содержащая снимки
+    - **datasets_path**: директория с датасетами
+    - **icemaps_path**: директория с датасетами
+    - **land_path**: путь к шейпу с землей
+    - **age, concentrat, age_group**: характеристики льда, которые будут добавлены в датасет
+    - **simple**: добавляемые текстурные характеристики из группы simple
+    - **advanced**: добавляемые текстурные характеристики из группы advanced
+    """
 
     args_dict = args.dict()
     task = celery_app.send_task(
@@ -51,7 +62,7 @@ async def handle_args(
     return JSONResponse({"task_id": task_item.id})
 
 
-@app.get("/flower")
+@app.get("/flower", status_code=301)
 def flower_redirect(request: Request):
     redirect_url = str(request.base_url)
     redirect_url = redirect_url.replace(
