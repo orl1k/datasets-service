@@ -18,7 +18,7 @@ services:
     hostname: rabbitmq
     image: rabbitmq:3.8
     volumes:
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - rabbitmq-data:/var/lib/rabbitmq/
       - rabbitmq-logs:/var/log/rabbitmq
     restart: always
@@ -37,24 +37,24 @@ services:
     hostname: worker
     build: ./worker
     env_file: .env
+    command: watchmedo auto-restart -- celery -c ${CELERY_NUM_WORKERS} worker -l info -A tasks.celery_app
     volumes:
-      - ./worker:/worker
+      - ./worker:/home/user/worker
     depends_on:
       - rabbitmq
       - redis
     restart: always
 
   monitor:
+    container_name: monitor
     build: ./worker
     ports:
       - 5555:5555
     entrypoint: flower
-    env_file: .env
-    command:  -A tasks --port=5555 --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
+    command: -A tasks --port=5555 --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
-    volumes: 
-      - ./worker:/queue
+      - rabbitmq
     restart: always
 
 volumes:

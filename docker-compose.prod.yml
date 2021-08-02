@@ -16,7 +16,7 @@ services:
     hostname: rabbitmq
     image: rabbitmq:3.8
     volumes:
-      - ./rabbitmq/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
       - ./rabbitmq/data:/var/lib/rabbitmq/
       - ./rabbitmq/log:/var/log/rabbitmq
     restart: always
@@ -30,18 +30,24 @@ services:
       - ./redis/data:/data
     restart: always
 
-  worker:
+  worker-prod:
     container_name: worker
     hostname: worker
-    build: ./worker
+    build: 
+      context: ./worker
+      dockerfile: dockerfile.prod
     env_file: .env
+    command: celery worker -c ${CELERY_NUM_WORKERS} -A tasks.celery_app --loglevel=info --logfile=./logs/celery.log
     depends_on:
       - rabbitmq
       - redis
     restart: always
 
   monitor:
-    build: ./worker
+    container_name: monitor
+    build: 
+      context: ./worker
+      dockerfile: dockerfile.prod
     ports:
       - ${FLOWER_PORT}:${FLOWER_PORT}
     entrypoint: flower
@@ -49,5 +55,6 @@ services:
     command:  -A tasks --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
+      - rabbitmq
     restart: always
     

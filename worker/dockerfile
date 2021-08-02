@@ -3,8 +3,6 @@ FROM python:3.9.6-slim-buster AS base
 # Set env
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV APP_HOME=/worker
-
 
 
 FROM base AS python-deps
@@ -21,23 +19,23 @@ RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
 
 FROM base AS runtime
 
+# Install watchdog
+# (Dev) Hot code reloading
+# https://www.distributedpython.com/2019/04/23/celery-reload/
+RUN pip install watchdog pyyaml argh
+
 # Copy virtual env from python-deps stage
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
-# Install application into container
-WORKDIR ${APP_HOME}
+# Add non-root user
+RUN useradd -ms /bin/bash user
+USER user
+WORKDIR /home/user/worker
 
+# Install application into container
 RUN mkdir logs
 
 COPY tasks.py .
 COPY test.py .
 COPY ds_arrays.py .
-
-# (Prod)
-# ENTRYPOINT celery worker -c 1 -A tasks.celery_app --loglevel=info --logfile=logs/celery.log
-
-# (Dev) Hot code reloading
-# https://www.distributedpython.com/2019/04/23/celery-reload/
-RUN pip install watchdog pyyaml argh
-ENTRYPOINT watchmedo auto-restart --directory=./ --pattern=*.py --recursive -- celery worker -c 1 --app=tasks.celery_app --concurrency=1 --loglevel=INFO
