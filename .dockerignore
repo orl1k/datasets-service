@@ -5,7 +5,10 @@ VERSION
 README.md
 Changelog.md
 Makefile
+dockerfile
+docker.prod
 docker-compose.yml
+docker-compose.prod.yml
 docs
 Pipfile
 Pipfile.lock
