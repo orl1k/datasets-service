@@ -6,13 +6,14 @@ from fastapi.templating import Jinja2Templates
 from worker import celery_app, TaskItem
 from models import ScriptArgs
 
+from typing import Deque
 from collections import deque
 import pickle
 import os
 
 app = FastAPI()
 
-task_queue = deque(maxlen=10)
+task_queue: Deque = deque(maxlen=10)
 task_queue_file = "task_queue.pickle"
 # if os.path.exists(task_queue_file):
 #     with open(task_queue_file, "rb") as f:
@@ -23,7 +24,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
-async def home(request: Request) -> templates.TemplateResponse:
+async def home(request: Request):
     return templates.TemplateResponse(
         "home.html", {"request": request, "tasks": task_queue}
     )

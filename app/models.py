@@ -1,6 +1,5 @@
 from pydantic import BaseModel, FilePath, DirectoryPath
 from fastapi import Form
-import pathlib
 import inspect
 from typing import Type
 import datetime
