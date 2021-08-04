@@ -12,6 +12,8 @@ celery_app = Celery(
 
 celery_app.conf.task_queue_max_priority = 10
 celery_app.conf.task_default_priority = 5
+celery_app.conf.worker_prefetch_multiplier = 1
+celery_app.conf.task_track_started = True
 celery_app.conf.update(result_extended=True)
 
 

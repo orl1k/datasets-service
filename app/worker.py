@@ -13,6 +13,8 @@ celery_app = Celery(
 
 celery_app.conf.task_queue_max_priority = 10
 celery_app.conf.task_default_priority = 5
+celery_app.conf.worker_prefetch_multiplier = 1
+celery_app.conf.task_track_started = True
 celery_app.conf.update(result_extended=True)
 
 
@@ -31,11 +33,13 @@ class TaskState:
     name: str
     icon_mapping: ClassVar[dict] = {
         states.SUCCESS: "checkmark",
-        states.PENDING: "history",
+        states.STARTED: "history",
+        states.PENDING: "hourglass",
         states.FAILURE: "times",
     }
     state_class_mapping: ClassVar[dict] = {
         states.SUCCESS: "positive",
+        states.STARTED: "warning",
         states.PENDING: "warning",
         states.FAILURE: "error",
     }
