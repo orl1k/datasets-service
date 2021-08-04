@@ -37,7 +37,7 @@ services:
       context: ./worker
       dockerfile: dockerfile.prod
     env_file: .env
-    command: celery worker -c ${CELERY_NUM_WORKERS} -A tasks.celery_app --loglevel=info --logfile=./logs/celery.log
+    command: celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
     depends_on:
       - rabbitmq
       - redis
@@ -52,7 +52,7 @@ services:
       - ${FLOWER_PORT}:${FLOWER_PORT}
     entrypoint: flower
     env_file: .env
-    command:  -A tasks --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
+    command:  -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@rabbitmq:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
       - rabbitmq

@@ -13,10 +13,10 @@ import os
 
 app = FastAPI()
 
-task_queue: Deque = deque(maxlen=10)
-task_queue_file = "task_queue.pickle"
-# if os.path.exists(task_queue_file):
-#     with open(task_queue_file, "rb") as f:
+task_queue_web: Deque = deque(maxlen=10)  # Очередь для мониторинга в вебе
+task_queue_web_file = "task_queue_web.pickle"
+# if os.path.exists(task_queue_web_file):
+#     with open(task_queue_web_file, "rb") as f:
 #         task_queue = pickle.load(f)
 
 templates = Jinja2Templates(directory="templates")
@@ -26,7 +26,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 @app.get("/")
 async def home(request: Request):
     return templates.TemplateResponse(
-        "home.html", {"request": request, "tasks": task_queue}
+        "home.html", {"request": request, "tasks": task_queue_web}
     )
 
 
@@ -54,7 +54,7 @@ async def handle_args(
         priority=args.task_priority,
     )
     task_item = TaskItem(task.id, args_dict)
-    task_queue.appendleft(task_item)
+    task_queue_web.appendleft(task_item)
 
     print("-" * 100)
     print(task_item)
@@ -85,5 +85,5 @@ def health_check():
 
 @app.on_event("shutdown")
 def shutdown_event():
-    with open(task_queue_file, "wb") as f:
-        pickle.dump(task_queue, f)
+    with open(task_queue_web_file, "wb") as f:
+        pickle.dump(task_queue_web, f)
