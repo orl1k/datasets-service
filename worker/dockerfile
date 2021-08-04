@@ -1,6 +1,11 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
 FROM python:3.9.6-slim as python-base
 
+ARG UNAME=user
+ARG GNAME=group
+ARG UID=1000
+ARG GID=1000
+
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -60,7 +65,8 @@ FROM python-base as development
 RUN pip install watchdog pyyaml argh
 
 # Add non-root user
-RUN useradd -ms /bin/bash user
+RUN groupadd -g $GID $GNAME
+RUN useradd -ms /bin/bash -u $UID -g $GID user
 USER user
 
 # Copy virtual env from builder-base stage
@@ -77,7 +83,8 @@ COPY *.py .
 FROM python-base as production
 
 # Add non-root user
-RUN useradd -ms /bin/bash user
+RUN groupadd -g $GID $GNAME
+RUN useradd -ms /bin/bash -u $UID -g $GID user
 USER user
 
 # Copy virtual env from builder-base stage
@@ -88,3 +95,9 @@ RUN mkdir logs
 
 # Install application into container
 COPY *.py .
+
+# Run celery worker:
+CMD celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
+
+# Run flower monitor:
+# CMD flower -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//

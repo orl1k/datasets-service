@@ -1,11 +1,20 @@
 version: '3.9'
 
+x-default-user-args: &default-user-args
+  args:
+    - UNAME=${UNAME}
+    - UID=${UID}
+    - GNAME=${GNAME}
+    - GID=${GID}
+
 services:
   app:
     hostname: app
-    build: ./app
+    build: 
+      context: ./app
+      <<: *default-user-args
     env_file: .env
-    entrypoint: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT}
+    command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT}
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     restart: always
@@ -32,6 +41,7 @@ services:
     build: 
       context: ./worker
       target: production
+      <<: *default-user-args
     env_file: .env
     command: celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
     depends_on:
@@ -43,11 +53,11 @@ services:
     build: 
       context: ./worker
       target: production
+      <<: *default-user-args
     ports:
       - ${FLOWER_PORT}:${FLOWER_PORT}
-    entrypoint: flower
+    command: flower -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
     env_file: .env
-    command: -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
       - rabbitmq

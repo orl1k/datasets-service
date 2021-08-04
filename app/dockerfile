@@ -1,6 +1,11 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
 FROM python:3.9.6-slim as python-base
 
+ARG UNAME=user
+ARG GNAME=group
+ARG UID=1000
+ARG GID=1000
+
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
     # prevents python creating .pyc files
@@ -55,7 +60,8 @@ RUN poetry install --no-dev
 FROM python-base as production
 
 # Add non-root user
-RUN useradd -ms /bin/bash user
+RUN groupadd -g $GID $GNAME
+RUN useradd -ms /bin/bash -u $UID -g $GID user
 USER user
 
 # Copy virtual env from builder-base stage
@@ -63,3 +69,6 @@ COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR /home/user/app
 COPY . .
+
+# Run uvicorn server:
+CMD uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT}
