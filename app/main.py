@@ -38,11 +38,11 @@ async def home(request: Request):
     )
 
 
-@app.post("/script", status_code=201)
+@app.post("/script", status_code=201, response_model=TaskItem)
 async def handle_args(
     request: Request,
     args: ScriptArgs = Depends(ScriptArgs.as_form),
-) -> JSONResponse:
+) -> TaskItem:
     """
     Выберите аргументы скрипта сборки датасета:
     - **dataset_date**: дата, за которую будет собран датасет
@@ -68,7 +68,7 @@ async def handle_args(
     print(task_item)
     print("-" * 100)
 
-    return JSONResponse({"task_id": task_item.id})
+    return task_item
 
 
 @app.get("/flower", status_code=301)
@@ -82,8 +82,8 @@ def flower_redirect(
     return RedirectResponse(redirect_url)
 
 
-@app.get("/health_check")
-def health_check():
+@app.get("/health_check", status_code=200)
+def health_check() -> JSONResponse:
     return JSONResponse({"healthcheck": "OK"})
 
 
