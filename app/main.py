@@ -5,35 +5,44 @@ from fastapi.templating import Jinja2Templates
 
 from worker import celery_app, TaskItem
 from models import ScriptArgs
+import config
 
+from typing import Deque
 from collections import deque
+from functools import lru_cache
 import pickle
 import os
 
 app = FastAPI()
 
-task_queue = deque(maxlen=10)
-task_queue_file = "task_queue.pickle"
-# if os.path.exists(task_queue_file):
-#     with open(task_queue_file, "rb") as f:
-#         task_queue = pickle.load(f)
+
+@lru_cache()
+def get_settings():
+    return config.Settings()
+
+
+task_queue_web: Deque = deque(maxlen=10)  # Очередь для мониторинга в вебе
+task_queue_web_file = "task_queue_web.pickle"
+if os.path.exists(task_queue_web_file):
+    with open(task_queue_web_file, "rb") as f:
+        task_queue = pickle.load(f)
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 @app.get("/")
-async def home(request: Request) -> templates.TemplateResponse:
+async def home(request: Request):
     return templates.TemplateResponse(
-        "home.html", {"request": request, "tasks": task_queue}
+        "home.html", {"request": request, "tasks": task_queue_web}
     )
 
 
-@app.post("/script", status_code=201)
+@app.post("/script", status_code=201, response_model=TaskItem)
 async def handle_args(
     request: Request,
     args: ScriptArgs = Depends(ScriptArgs.as_form),
-) -> JSONResponse:
+) -> TaskItem:
     """
     Выберите аргументы скрипта сборки датасета:
     - **dataset_date**: дата, за которую будет собран датасет
@@ -52,37 +61,33 @@ async def handle_args(
         kwargs=args_dict,
         priority=args.task_priority,
     )
-    task_item = TaskItem(task.id, args_dict)
-    task_queue.appendleft(task_item)
+    task_item = TaskItem(id=task.id, kwargs=args_dict)
+    task_queue_web.appendleft(task_item)
 
     print("-" * 100)
     print(task_item)
     print("-" * 100)
 
-    return JSONResponse({"task_id": task_item.id})
+    return task_item
 
 
 @app.get("/flower", status_code=301)
-def flower_redirect(request: Request):
+def flower_redirect(
+    request: Request, settings: config.Settings = Depends(get_settings)
+):
     redirect_url = str(request.base_url)
     redirect_url = redirect_url.replace(
-        str(request.base_url.port), os.getenv("FLOWER_PORT")
+        str(request.base_url.port), settings.flower_port
     )
     return RedirectResponse(redirect_url)
 
 
-@app.get("/health_check")
-def health_check():
+@app.get("/health_check", status_code=200)
+def health_check() -> JSONResponse:
     return JSONResponse({"healthcheck": "OK"})
-
-
-# @app.on_event("startup")
-# async def startup_event():
-#     with open(task_queue_file, "rb") as f:
-#         task_queue = pickle.load(f)
 
 
 @app.on_event("shutdown")
 def shutdown_event():
-    with open(task_queue_file, "wb") as f:
-        pickle.dump(task_queue, f)
+    with open(task_queue_web_file, "wb") as f:
+        pickle.dump(task_queue_web, f)

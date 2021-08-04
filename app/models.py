@@ -1,9 +1,8 @@
-from pydantic import BaseModel, FilePath, DirectoryPath
+from pydantic import BaseModel
 from fastapi import Form
-import pathlib
-import inspect
 from typing import Type
 import datetime
+import inspect
 
 
 def as_form(cls: Type[BaseModel]):
@@ -38,10 +37,6 @@ class ScriptArgs(BaseModel):
     datasets_path: str
     icemaps_path: str
     land_path: str
-    # rasters_path: DirectoryPath
-    # datasets_path: DirectoryPath
-    # icemaps_path: DirectoryPath
-    # land_path: FilePath
     age: bool = True
     concentrat: bool = True
     age_group: bool = True

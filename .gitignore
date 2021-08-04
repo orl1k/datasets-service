@@ -11,10 +11,13 @@ worker/logs/celery.log
 /rabbitmq
 
 # Task queue data
-/app/task_queue.pickle
+/app/task_queue_web.pickle
 
 # Python cache
 __pycache__
 
 # VSCode
 **/.vscode/
+
+# MyPy cache
+.mypy_cache
