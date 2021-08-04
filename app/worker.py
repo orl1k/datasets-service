@@ -1,5 +1,5 @@
 from celery import Celery, states
-from dataclasses import dataclass
+from pydantic import BaseModel
 from typing import ClassVar
 from config import Settings
 
@@ -21,18 +21,19 @@ celery_app.conf.task_track_started = True
 celery_app.conf.update(result_extended=True)
 
 
-@dataclass(frozen=True)
-class TaskItem:
+class TaskItem(BaseModel):
     id: str
     kwargs: dict
 
     @property
     def state(self):
-        return TaskState(celery_app.AsyncResult(self.id).state)
+        return TaskState(name=celery_app.AsyncResult(self.id).state)
+
+    class Config:
+        frozen = True
 
 
-@dataclass(frozen=True)
-class TaskState:
+class TaskState(BaseModel):
     name: str
     icon_mapping: ClassVar[dict] = {
         states.SUCCESS: "checkmark",
@@ -54,3 +55,6 @@ class TaskState:
     @property
     def state_class(self):
         return self.state_class_mapping[self.name]
+
+    class Config:
+        frozen = True

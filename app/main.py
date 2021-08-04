@@ -61,7 +61,7 @@ async def handle_args(
         kwargs=args_dict,
         priority=args.task_priority,
     )
-    task_item = TaskItem(task.id, args_dict)
+    task_item = TaskItem(id=task.id, kwargs=args_dict)
     task_queue_web.appendleft(task_item)
 
     print("-" * 100)
