@@ -1,0 +1,27 @@
+version: '3.9'
+
+services:
+  app:
+    container_name: app
+    entrypoint: uvicorn main:app --host 0.0.0.0 --reload --port ${BACKEND_PORT}
+    volumes:
+      - ./app:/home/user/app
+
+  rabbitmq:
+    container_name: rabbitmq
+
+  redis:
+    container_name: redis
+
+  worker:
+    container_name: worker
+    build:
+      target: development
+    command: watchmedo auto-restart -- celery -c ${CELERY_NUM_WORKERS} worker -l info -A celery_app.celery_app
+    volumes:
+      - ./worker:/home/user/worker
+
+  monitor:
+    container_name: monitor
+    build: 
+      target: development
