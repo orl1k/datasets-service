@@ -70,6 +70,4 @@ WORKDIR /home/user/worker
 RUN mkdir logs
 
 # Install application into container
-COPY celery_app.py .
-COPY test.py .
-COPY ds_arrays.py .
+COPY *.py .

@@ -52,7 +52,7 @@ services:
       - ${FLOWER_PORT}:${FLOWER_PORT}
     entrypoint: flower
     env_file: .env
-    command:  -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
+    command: -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
       - rabbitmq

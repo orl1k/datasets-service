@@ -1,16 +1,17 @@
-import os
 from celery import Celery, states
 from dataclasses import dataclass
 from typing import ClassVar
+from config import Settings
 
+settings = Settings()
 celery_app = Celery(
-    os.getenv("CELERY_APP_NAME"),
-    broker=f"amqp://{os.getenv('RABBITMQ_USERNAME')}:"
-    + f"{os.getenv('RABBITMQ_PASSWORD')}@"
-    + f"{os.getenv('RABBITMQ_HOSTNAME')}:"
-    + f"{os.getenv('RABBITMQ_NODE_PORT_NUMBER')}//",
-    backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@"
-    + f"{os.getenv('REDIS_HOSTNAME')}:6379/0",
+    settings.celery_app_name,
+    broker=f"amqp://{settings.rabbitmq_username}:"
+    + f"{settings.rabbitmq_password}@"
+    + f"{settings.rabbitmq_hostname}:"
+    + f"{settings.rabbitmq_node_port_number}//",
+    backend=f"redis://:{settings.redis_password}@"
+    + f"{settings.redis_hostname}:6379/0",
 )
 
 celery_app.conf.task_queue_max_priority = 10

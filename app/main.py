@@ -5,13 +5,21 @@ from fastapi.templating import Jinja2Templates
 
 from worker import celery_app, TaskItem
 from models import ScriptArgs
+import config
 
 from typing import Deque
 from collections import deque
+from functools import lru_cache
 import pickle
 import os
 
 app = FastAPI()
+
+
+@lru_cache()
+def get_settings():
+    return config.Settings()
+
 
 task_queue_web: Deque = deque(maxlen=10)  # Очередь для мониторинга в вебе
 task_queue_web_file = "task_queue_web.pickle"
@@ -64,10 +72,12 @@ async def handle_args(
 
 
 @app.get("/flower", status_code=301)
-def flower_redirect(request: Request):
+def flower_redirect(
+    request: Request, settings: config.Settings = Depends(get_settings)
+):
     redirect_url = str(request.base_url)
     redirect_url = redirect_url.replace(
-        str(request.base_url.port), os.getenv("FLOWER_PORT")
+        str(request.base_url.port), settings.flower_port
     )
     return RedirectResponse(redirect_url)
 

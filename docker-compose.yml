@@ -48,10 +48,11 @@ services:
   monitor:
     container_name: monitor
     build: ./worker
+    env_file: .env
     ports:
-      - 5555:5555
+      - ${FLOWER_PORT}:${FLOWER_PORT}
     entrypoint: flower
-    command: -A celery_app.celery_app --port=5555 --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
+    command: -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
     depends_on:
       - redis
       - rabbitmq
