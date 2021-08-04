@@ -5,9 +5,11 @@ from celery import Celery
 celery_app = Celery(
     os.getenv("CELERY_APP_NAME"),
     broker=f"amqp://{os.getenv('RABBITMQ_USERNAME')}:"
-    + f"{os.getenv('RABBITMQ_PASSWORD')}@rabbitmq:"
+    + f"{os.getenv('RABBITMQ_PASSWORD')}@"
+    + f"{os.getenv('RABBITMQ_HOSTNAME')}:"
     + f"{os.getenv('RABBITMQ_NODE_PORT_NUMBER')}//",
-    backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@redis:6379/0",
+    backend=f"redis://:{os.getenv('REDIS_PASSWORD')}@"
+    + f"{os.getenv('REDIS_HOSTNAME')}:6379/0",
 )
 
 celery_app.conf.task_queue_max_priority = 10
