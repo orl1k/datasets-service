@@ -3,7 +3,6 @@ from fastapi import Form
 from typing import Type
 import datetime
 import inspect
-import pathlib
 
 
 def as_form(cls: Type[BaseModel]):
