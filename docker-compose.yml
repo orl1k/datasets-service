@@ -2,9 +2,7 @@ version: '3.9'
 
 x-default-user-args: &default-user-args
   args:
-    - UNAME=${UNAME}
     - UID=${UID}
-    - GNAME=${GNAME}
     - GID=${GID}
 
 services:

@@ -1,10 +1,7 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
 FROM python:3.9.6-slim as python-base
 
-ARG UNAME=user
-ARG GNAME=group
-ARG UID=1000
-ARG GID=1000
+ARG USER=${UID:-1000}
 
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
@@ -65,9 +62,7 @@ FROM python-base as development
 RUN pip install watchdog pyyaml argh
 
 # Add non-root user
-RUN groupadd -g $GID $GNAME
-RUN useradd -ms /bin/bash -u $UID -g $GID user
-USER user
+USER $USER
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
@@ -76,16 +71,14 @@ WORKDIR /home/user/worker
 RUN mkdir logs
 
 # Install application into container
-COPY *.py .
+COPY *.py ./
 
 
 # `production` image used for runtime
 FROM python-base as production
 
 # Add non-root user
-RUN groupadd -g $GID $GNAME
-RUN useradd -ms /bin/bash -u $UID -g $GID user
-USER user
+USER $USER
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
@@ -94,7 +87,7 @@ WORKDIR /home/user/worker
 RUN mkdir logs
 
 # Install application into container
-COPY *.py .
+COPY *.py ./
 
 # Run celery worker:
 CMD celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
