@@ -54,16 +54,22 @@ async def handle_args(
     - **simple**: добавляемые текстурные характеристики из группы simple
     - **advanced**: добавляемые текстурные характеристики из группы advanced
     """
-
-    args_dict = args.dict()
-    task = celery_app.send_task(
-        "run_script",
-        kwargs=args_dict,
-        priority=args.task_priority,
-    )
-    task_item = TaskItem(id=task.id, kwargs=args_dict)
-    task_queue_web.appendleft(task_item)
-
+    try:
+        args_dict = args.dict()
+        task = celery_app.send_task(
+            "run_script",
+            kwargs=args_dict,
+            priority=args.task_priority,
+        )
+    except Exception:
+        print('Ошибка при отправке задачи')
+        
+    try:
+        task_item = TaskItem(id=task.id, kwargs=args_dict)
+        task_queue_web.appendleft(task_item)
+    except Exception:
+        print('Ошибка очереди веб-интерфейса')
+        
     print("-" * 100)
     print(task_item)
     print("-" * 100)
