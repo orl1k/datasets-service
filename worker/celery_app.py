@@ -1,6 +1,12 @@
 import os
 from celery import Celery
 from config import Settings
+from ds_arrays import (
+    create_ds_arrays,
+    create_weather_ds,
+    get_band_nums,
+    weather_params,
+)
 
 settings = Settings()
 celery_app = Celery(
@@ -27,17 +33,26 @@ def run_script(**kwargs):
         + "concentrat " * kwargs["concentrat"]
         + "age_group" * kwargs["age_group"]
     )
-    del kwargs["age"], kwargs["concentrat"], kwargs["age_group"]
-
     kwargs["simple"] = "all" * kwargs["simple"]
     kwargs["advanced"] = "all" * kwargs["advanced"]
+    print(kwargs)
 
-    # Parse dict -> cli command
-    script_string = "python test.py" + "".join(
-        [f" --{x} {str(y)}" if y else "" for x, y in kwargs.items()]
+    create_ds_arrays(
+        kwargs["dataset_date"],
+        kwargs["icemaps_path"],
+        kwargs["rasters_path"],
+        kwargs["datasets_path"],
+        kwargs["land_path"],
+        kwargs["ice_params"],
+        simple_band_nums=get_band_nums(kwargs["simple"]),
+        advanced_band_nums=get_band_nums(kwargs["advanced"]),
     )
 
-    print(f"{script_string=}")
-    os.system(script_string)
+    create_weather_ds(
+        kwargs["rasters_path"],
+        kwargs["dataset_date"],
+        kwargs["datasets_path"],
+        weather_params,
+    )
 
     return True
