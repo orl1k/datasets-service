@@ -2,6 +2,7 @@
 FROM python:3.9.6-slim as python-base
 
 ARG USER=${UID:-1000}
+ARG GROUP=${UID:-1000}
 
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
@@ -57,7 +58,7 @@ RUN poetry install --no-dev
 FROM python-base as production
 
 # Add non-root user
-USER $USER
+USER $USER:$GROUP
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
