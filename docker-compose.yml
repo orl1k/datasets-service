@@ -8,8 +8,8 @@ x-default-healthcheck-timings: &default-healthcheck-timings
 
 x-default-user-args: &default-user-args
   args:
-    - UID=${UID}
-    - GID=${GID}
+    - USER=${UID}
+    - GROUP=${GID}
 
 services:
   app:
