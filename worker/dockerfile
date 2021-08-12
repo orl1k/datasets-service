@@ -1,5 +1,5 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
-FROM python:3.9.6-slim as python-base
+FROM osgeo/gdal:ubuntu-small-3.3.1 as python-base
 
 ARG USER=${UID:-1000}
 ARG GROUP=${GID:-1000}
