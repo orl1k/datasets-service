@@ -1,5 +1,11 @@
 version: '3.9'
 
+x-default-healthcheck-timings: &default-healthcheck-timings
+  interval: 3m
+  timeout: 3m
+  retries: 3
+  start_period: 30s
+
 x-default-user-args: &default-user-args
   args:
     - UID=${UID}
@@ -13,6 +19,9 @@ services:
       <<: *default-user-args
     env_file: .env
     command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT}
+    healthcheck:
+      test: curl -f http://0.0.0.0:8000/healthcheck || exit 1
+      <<: *default-healthcheck-timings
     ports:
       - ${BACKEND_PORT}:${BACKEND_PORT}
     restart: always

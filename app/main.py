@@ -88,7 +88,7 @@ def flower_redirect(
     return RedirectResponse(redirect_url)
 
 
-@app.get("/health_check", status_code=200)
+@app.get("/healthcheck", status_code=200)
 def health_check() -> JSONResponse:
     return JSONResponse({"healthcheck": "OK"})
 
