@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
@@ -63,16 +63,20 @@ async def handle_args(
             priority=args.task_priority,
         )
     except Exception:
-        print('Ошибка при отправке задачи')
+        message = "Ошибка при отправке задачи"
+        raise HTTPException(status_code=500, detail=message)
+        print(message)
         print(traceback.format_exc())
-        
+
     try:
         task_item = TaskItem(id=task.id, kwargs=args_dict)
         task_queue_web.appendleft(task_item)
     except Exception:
-        print('Ошибка очереди веб-интерфейса')
+        message = "Ошибка очереди веб-интерфейса"
+        raise HTTPException(status_code=500, detail=message)
+        print(message)
         print(traceback.format_exc())
-        
+
     print("-" * 100)
     print(task_item)
     print("-" * 100)
