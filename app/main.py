@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from worker import celery_app, TaskItem
-from models import ScriptArgs
+import models
 import config
 
 from typing import Deque
@@ -41,7 +41,7 @@ async def home(request: Request):
 @app.post("/script", status_code=201, response_model=TaskItem)
 async def handle_args(
     request: Request,
-    args: ScriptArgs = Depends(ScriptArgs.as_form),
+    args: models.ScriptArgs = Depends(models.ScriptArgs.as_form),
 ) -> TaskItem:
     """
     Выберите аргументы скрипта сборки датасета:

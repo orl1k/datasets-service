@@ -1,12 +1,7 @@
 import os
 from celery import Celery
 from config import Settings
-from ds_arrays import (
-    create_ds_arrays,
-    create_weather_ds,
-    get_band_nums,
-    weather_params,
-)
+import ds_arrays
 
 settings = Settings()
 celery_app = Celery(
@@ -37,22 +32,22 @@ def run_script(**kwargs):
     kwargs["advanced"] = "all" * kwargs["advanced"]
     print(kwargs)
 
-    create_ds_arrays(
+    ds_arrays.create_ds_arrays(
         kwargs["dataset_date"],
         kwargs["icemaps_path"],
         kwargs["rasters_path"],
         kwargs["datasets_path"],
         kwargs["land_path"],
         kwargs["ice_params"],
-        simple_band_nums=get_band_nums(kwargs["simple"]),
-        advanced_band_nums=get_band_nums(kwargs["advanced"]),
+        simple_band_nums=ds_arrays.get_band_nums(kwargs["simple"]),
+        advanced_band_nums=ds_arrays.get_band_nums(kwargs["advanced"]),
     )
 
-    create_weather_ds(
+    ds_arrays.create_weather_ds(
         kwargs["rasters_path"],
         kwargs["dataset_date"],
         kwargs["datasets_path"],
-        weather_params,
+        ds_arrays.weather_params,
     )
 
     return True
