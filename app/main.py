@@ -10,6 +10,7 @@ import config
 from typing import Deque
 from collections import deque
 from functools import lru_cache
+import traceback
 import pickle
 import os
 
@@ -63,12 +64,14 @@ async def handle_args(
         )
     except Exception:
         print('Ошибка при отправке задачи')
+        print(traceback.format_exc())
         
     try:
         task_item = TaskItem(id=task.id, kwargs=args_dict)
         task_queue_web.appendleft(task_item)
     except Exception:
         print('Ошибка очереди веб-интерфейса')
+        print(traceback.format_exc())
         
     print("-" * 100)
     print(task_item)
