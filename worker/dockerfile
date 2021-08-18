@@ -33,16 +33,20 @@ ENV PYTHONUNBUFFERED=1 \
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
-RUN apt-get update && apt-get install -y python3-distutils
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y python3-distutils \
+    && rm -rf /var/lib/apt/lists/*
 
 # `builder-base` stage is used to build deps + create our virtual environment
 FROM python-base as builder-base
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     # deps for installing poetry
     curl \
     # deps for building python deps
-    build-essential
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
@@ -61,6 +65,9 @@ FROM python-base as development
 # Install watchdog
 # (Dev) Hot code reloading
 # https://www.distributedpython.com/2019/04/23/celery-reload/
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install watchdog pyyaml argh
 
 # Add non-root user
