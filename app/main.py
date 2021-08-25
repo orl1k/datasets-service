@@ -64,18 +64,18 @@ async def handle_args(
         )
     except Exception:
         message = "Ошибка при отправке задачи"
-        raise HTTPException(status_code=500, detail=message)
         print(message)
         print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=message)
 
     try:
         task_item = TaskItem(id=task.id, kwargs=args_dict)
         task_queue_web.appendleft(task_item)
     except Exception:
         message = "Ошибка очереди веб-интерфейса"
-        raise HTTPException(status_code=500, detail=message)
         print(message)
         print(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=message)
 
     print("-" * 100)
     print(task_item)
