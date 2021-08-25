@@ -69,7 +69,7 @@ async def handle_args(
         raise HTTPException(status_code=500, detail=message)
 
     try:
-        task_item = TaskItem(id=task.id, kwargs=args_dict)
+        task_item = TaskItem(name='SAR', id=task.id, kwargs=args_dict)
         task_queue_web.appendleft(task_item)
     except Exception:
         message = "Ошибка очереди веб-интерфейса"
@@ -109,7 +109,7 @@ async def handle_weather_args(
         raise HTTPException(status_code=500, detail=message)
 
     try:
-        task_item = TaskItem(id=task.id, kwargs=args_dict)
+        task_item = TaskItem(name='Weather', id=task.id, kwargs=args_dict)
         task_queue_web.appendleft(task_item)
     except Exception:
         message = "Ошибка очереди веб-интерфейса"
