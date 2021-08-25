@@ -126,7 +126,7 @@
             ;
     </script>
 
-    <!-- Скрипт для обработки формы и всплывающего окна -->
+    <!-- Скрипт для обработки форм и всплывающего окна -->
     <script>
         $(document).ready(function () {
             $("#submit").click(function (e) {
@@ -135,6 +135,50 @@
                 $.ajax({
                     type: 'POST',
                     url: '/script',
+                    data: form.serialize(),
+                    success: function (response) {
+                        $('body')
+                            .toast({
+                                title: 'SUCCESS',
+                                class: 'success',
+                                message: 'Script started with task id: ' + response.id,
+                                showProgress: 'bottom',
+                                progressUp: true,
+                                position: 'top attached',
+                                transition: {
+                                    showMethod: 'fade down',
+                                    hideMethod: 'fade down',
+                                }
+                            });
+                    },
+                    error: function (response) {
+                        $('body')
+                            .toast({
+                                title: 'ERROR',
+                                class: 'error',
+                                message: 'Script not started. Error message: ' + response.responseJSON.detail[0].msg,
+                                showProgress: 'bottom',
+                                progressUp: true,
+                                position: 'top attached',
+                                transition: {
+                                    showMethod: 'fade down',
+                                    hideMethod: 'fade down',
+                                }
+                            });
+                    }
+                });
+            });
+        })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#weather_submit").click(function (e) {
+                e.preventDefault();
+                var form = $(this).parents("form:first");
+                $.ajax({
+                    type: 'POST',
+                    url: '/weather_script',
                     data: form.serialize(),
                     success: function (response) {
                         $('body')
