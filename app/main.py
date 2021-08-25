@@ -90,20 +90,15 @@ async def handle_weather_args(
     args: models.ScriptArgs = Depends(models.WeatherScriptArgs.as_form),
 ) -> TaskItem:
     """
-    Выберите аргументы скрипта сборки датасета:
+    Выберите аргументы скрипта сборки датасета с погодой:
     - **dataset_date**: дата, за которую будет собран датасет
     - **rasters_path**: директория, содержащая снимки
     - **datasets_path**: директория с датасетами
-    - **icemaps_path**: директория с датасетами
-    - **land_path**: путь к шейпу с землей
-    - **age, concentrat, age_group**: характеристики льда, которые будут добавлены в датасет
-    - **simple**: добавляемые текстурные характеристики из группы simple
-    - **advanced**: добавляемые текстурные характеристики из группы advanced
     """
     try:
         args_dict = args.dict()
         task = celery_app.send_task(
-            "run_script",
+            "run_weather_script",
             kwargs=args_dict,
             priority=args.task_priority,
         )

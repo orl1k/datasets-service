@@ -44,6 +44,14 @@ def run_script(self, **kwargs):
         advanced_band_nums=ds_arrays.get_band_nums(kwargs["advanced"]),
     )
 
+    return True
+
+
+@celery_app.task(bind=True, name="run_weather_script", acks_late=True)
+def run_weather_script(self, **kwargs):
+    print("task_id: " + self.request.id)
+    print(kwargs)
+
     ds_arrays.create_weather_ds(
         kwargs["rasters_path"],
         kwargs["dataset_date"],
