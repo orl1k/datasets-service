@@ -10,17 +10,14 @@
         <div class="sub header">Enter script arguments and run the script</div>
     </div>
 </h1>
-<div class="ui top attached tabular menu">
-    <a class="item" data-tab="first">First</a>
-    <a class="item" data-tab="third">Third</a>
-</div>
-<div class="ui bottom attached tab segment" data-tab="first">
-    First
-</div>
-<div class="ui bottom attached tab segment" data-tab="third">
-    <form class="ui form error">
 
-        <div class="ui hidden divider"></div>
+<div class="ui pointing secondary menu">
+    <a class="item" data-tab="ds_arrays">DS arrays</a>
+    <a class="item" data-tab="weather_ds">Weather DS</a>
+</div>
+
+<div class="ui tab segment" data-tab="ds_arrays">
+    <form class="ui form error">
 
         <h2 class="ui dividing header ">
             <i class="calendar outline icon"></i>
@@ -46,6 +43,7 @@
                 Paths
             </div>
         </h2>
+        
         <div class="two fields">
             <div class="field">
                 <label>Rasters</label>
@@ -56,6 +54,7 @@
                 <input name="datasets_path" type="text" placeholder="Enter datasets path" value="/mnt/Gold1/datasets">
             </div>
         </div>
+
         <div class="two fields">
             <div class="field">
                 <label>Icemaps</label>
@@ -116,32 +115,98 @@
                 </div>
             </div>
         </div>
+        <h2 class="ui dividing header">
+            <i class="exclamation icon"></i>
+            <div class="content">
+                Priority
+            </div>
+        </h2>
+
+        <div class="ui hidden divider"></div>
+
+        <div class="ui labeled slider" id="task_priority_slider"></div>
+        <div class="ui input">
+            <input id="task_priority" type="hidden" value="5" name="task_priority">
+        </div>
+
+        <div class="ui basic segment center aligned">
+            <button class="ui huge animated button" type="submit" id="submit" tabindex="0">
+                <div class="visible content">Start script</div>
+                <div class="hidden content">
+                    <i class="angle double right icon"></i>
+                </div>
+            </button>
+            <a href="/flower" class="ui tiny image">
+                <img src="/static/celery_icon.png">
+            </a>
+        </div>
     </form>
 </div>
-<h2 class="ui dividing header">
-    <i class="exclamation icon"></i>
-    <div class="content">
-        Priority
-    </div>
-</h2>
 
-<div class="ui hidden divider"></div>
+<div class="ui tab segment" data-tab="weather_ds">
+    <form class="ui form error">
 
-<div class="ui labeled slider" id="task_priority_slider"></div>
-<div class="ui input">
-    <input id="task_priority" type="hidden" value="5" name="task_priority">
-</div>
+        <h2 class="ui dividing header ">
+            <i class="calendar outline icon"></i>
+            <div class="content">
+                Dataset date
+            </div>
+        </h2>
 
-<div class="ui basic segment center aligned">
-    <button class="ui huge animated button" type="submit" id="submit" tabindex="0">
-        <div class="visible content">Start script</div>
-        <div class="hidden content">
-            <i class="angle double right icon"></i>
+        <div class="ui form">
+            <div class="field">
+                <div class="ui calendar" id="dataset_calendar">
+                    <div class="ui input left icon">
+                        <i class="calendar icon"></i>
+                        <input type="text" placeholder="Pick up a date" name="dataset_date" id="dataset_date">
+                    </div>
+                </div>
+            </div>
         </div>
-    </button>
-    <a href="/flower" class="ui tiny image">
-        <img src="/static/celery_icon.png">
-    </a>
+
+        <h2 class="ui dividing header">
+            <i class="folder outline icon"></i>
+            <div class="content">
+                Paths
+            </div>
+        </h2>
+        <div class="two fields">
+            <div class="field">
+                <label>Rasters</label>
+                <input name="rasters_path" type="text" placeholder="Enter rasters path" value="/mnt/Gold2/rasters">
+            </div>
+            <div class="field">
+                <label>Datasets</label>
+                <input name="datasets_path" type="text" placeholder="Enter datasets path" value="/mnt/Gold1/datasets">
+            </div>
+        </div>
+
+        <h2 class="ui dividing header">
+            <i class="exclamation icon"></i>
+            <div class="content">
+                Priority
+            </div>
+        </h2>
+
+        <div class="ui hidden divider"></div>
+
+        <div class="ui labeled slider" id="task_priority_slider"></div>
+        <div class="ui input">
+            <input id="task_priority" type="hidden" value="5" name="task_priority">
+        </div>
+
+        <div class="ui basic segment center aligned">
+            <button class="ui huge animated button" type="submit" id="submit" tabindex="0">
+                <div class="visible content">Start script</div>
+                <div class="hidden content">
+                    <i class="angle double right icon"></i>
+                </div>
+            </button>
+            <a href="/flower" class="ui tiny image">
+                <img src="/static/celery_icon.png">
+            </a>
+        </div>
+    </form>
 </div>
 
 
