@@ -19,9 +19,26 @@
     </div>
     {% block scripts %}
 
-    <!-- Скрипт для форматирования даты -->
+    <!-- Скрипты для форматирования даты -->
     <script type="text/javascript">
         $('#dataset_calendar')
+            .calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date, settings) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
+            })
+            ;
+    </script>
+
+    <script type="text/javascript">
+        $('#weather_dataset_calendar')
             .calendar({
                 type: 'date',
                 formatter: {
