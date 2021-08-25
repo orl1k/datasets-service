@@ -1,10 +1,8 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
-FROM python:3.9.6-slim as python-base
+FROM osgeo/gdal:ubuntu-small-3.3.1 as python-base
 
-ARG UNAME=user
-ARG GNAME=group
-ARG UID=1000
-ARG GID=1000
+ARG USER=${UID:-1000}
+ARG GROUP=${GID:-1000}
 
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
@@ -35,15 +33,20 @@ ENV PYTHONUNBUFFERED=1 \
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y python3-distutils \
+    && rm -rf /var/lib/apt/lists/*
 
 # `builder-base` stage is used to build deps + create our virtual environment
 FROM python-base as builder-base
+
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
     # deps for installing poetry
     curl \
     # deps for building python deps
-    build-essential
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
@@ -62,12 +65,13 @@ FROM python-base as development
 # Install watchdog
 # (Dev) Hot code reloading
 # https://www.distributedpython.com/2019/04/23/celery-reload/
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y python3-pip \
+    && rm -rf /var/lib/apt/lists/*
 RUN pip install watchdog pyyaml argh
 
 # Add non-root user
-RUN groupadd -g $GID $GNAME
-RUN useradd -ms /bin/bash -u $UID -g $GID user
-USER user
+USER $USER:$GROUP
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
@@ -76,16 +80,14 @@ WORKDIR /home/user/worker
 RUN mkdir logs
 
 # Install application into container
-COPY *.py .
+COPY *.py ./
 
 
 # `production` image used for runtime
 FROM python-base as production
 
 # Add non-root user
-RUN groupadd -g $GID $GNAME
-RUN useradd -ms /bin/bash -u $UID -g $GID user
-USER user
+USER $USER:$GROUP
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
@@ -94,7 +96,7 @@ WORKDIR /home/user/worker
 RUN mkdir logs
 
 # Install application into container
-COPY *.py .
+COPY *.py ./
 
 # Run celery worker:
 CMD celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log

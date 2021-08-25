@@ -1,10 +1,8 @@
 # https://github.com/python-poetry/poetry/discussions/1879#discussioncomment-216865
 FROM python:3.9.6-slim as python-base
 
-ARG UNAME=user
-ARG GNAME=group
-ARG UID=1000
-ARG GID=1000
+ARG USER=${UID:-1000}
+ARG GROUP=${UID:-1000}
 
 # Set python env
 ENV PYTHONUNBUFFERED=1 \
@@ -35,15 +33,17 @@ ENV PYTHONUNBUFFERED=1 \
 # prepend poetry and venv to path
 ENV PATH="$POETRY_HOME/bin:$VENV_PATH/bin:$PATH"
 
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y curl \
+    && rm -rf /var/lib/apt/lists/*
 
 # `builder-base` stage is used to build deps + create our virtual environment
 FROM python-base as builder-base
+
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y \
-    # deps for installing poetry
-    curl \
     # deps for building python deps
-    build-essential
+    && apt-get install --no-install-recommends -y build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # install poetry - respects $POETRY_VERSION & $POETRY_HOME
 RUN curl -sSL https://raw.githubusercontent.com/sdispater/poetry/master/get-poetry.py | python
@@ -59,10 +59,11 @@ RUN poetry install --no-dev
 # `production` image used for runtime
 FROM python-base as production
 
+HEALTHCHECK --interval=3m --timeout=3m --start-period=20s --retries=3 \
+    CMD curl -f http://0.0.0.0:8000/healthcheck || exit 1
+
 # Add non-root user
-RUN groupadd -g $GID $GNAME
-RUN useradd -ms /bin/bash -u $UID -g $GID user
-USER user
+USER $USER:$GROUP
 
 # Copy virtual env from builder-base stage
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH

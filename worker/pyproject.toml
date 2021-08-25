@@ -5,7 +5,7 @@ description = "Celery worker service for assembling datasets using scripts"
 authors = ["orl1k <orlov.dvi@gazprom-neft.ru>"]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.8"
 numpy = "*"
 scipy = "*"
 celery = "==4.4.7"
