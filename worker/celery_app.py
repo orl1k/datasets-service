@@ -21,7 +21,7 @@ celery_app.conf.task_track_started = True
 celery_app.conf.update(result_extended=True)
 
 
-@celery_app.task(bind=True, name="run_script", acks_late=True)
+@celery_app.task(bind=True, name="run_sar_script", acks_late=True)
 def run_script(self, **kwargs):
     kwargs["ice_params"] = (
         "age " * kwargs["age"]

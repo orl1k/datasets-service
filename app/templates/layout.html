@@ -134,14 +134,14 @@
                 var form = $(this).parents("form:first");
                 $.ajax({
                     type: 'POST',
-                    url: '/script',
+                    url: '/sar_script',
                     data: form.serialize(),
                     success: function (response) {
                         $('body')
                             .toast({
                                 title: 'SUCCESS',
                                 class: 'success',
-                                message: 'Script started with task id: ' + response.id,
+                                message: response.name + ' script started with task id: ' + response.id,
                                 showProgress: 'bottom',
                                 progressUp: true,
                                 position: 'top attached',
@@ -185,7 +185,7 @@
                             .toast({
                                 title: 'SUCCESS',
                                 class: 'success',
-                                message: 'Script started with task id: ' + response.id,
+                                message: response.name + ' script started with task id: ' + response.id,
                                 showProgress: 'bottom',
                                 progressUp: true,
                                 position: 'top attached',
