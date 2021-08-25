@@ -214,6 +214,7 @@
 <table class="ui very basic collapsing celled table" id="task_table">
     <thead>
         <tr>
+            <th class="center aligned">Name</th>
             <th class="center aligned">Task ID</th>
             <th class="center aligned">State</th>
             <th class="center aligned">Params</th>
@@ -223,6 +224,7 @@
         {% for task in tasks %}
         <tr>
             {% set state = task.state %}
+            <td class="center aligned">{{ task.name }}</td>
             <td class="center aligned">{{ task.id }}</td>
             <td class="center aligned  {{ state.state_class }}">
                 <i class="icon {{ state.icon }}"></i> {{ state.name }}
