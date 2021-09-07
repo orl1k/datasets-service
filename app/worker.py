@@ -22,6 +22,7 @@ celery_app.conf.update(result_extended=True)
 
 
 class TaskItem(BaseModel):
+    name: str
     id: str
     kwargs: dict
 

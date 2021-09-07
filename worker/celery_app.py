@@ -21,7 +21,7 @@ celery_app.conf.task_track_started = True
 celery_app.conf.update(result_extended=True)
 
 
-@celery_app.task(bind=True, name="run_script", acks_late=True)
+@celery_app.task(bind=True, name="run_sar_script", acks_late=True)
 def run_script(self, **kwargs):
     kwargs["ice_params"] = (
         "age " * kwargs["age"]
@@ -43,6 +43,14 @@ def run_script(self, **kwargs):
         simple_band_nums=ds_arrays.get_band_nums(kwargs["simple"]),
         advanced_band_nums=ds_arrays.get_band_nums(kwargs["advanced"]),
     )
+
+    return True
+
+
+@celery_app.task(bind=True, name="run_weather_script", acks_late=True)
+def run_weather_script(self, **kwargs):
+    print("task_id: " + self.request.id)
+    print(kwargs)
 
     ds_arrays.create_weather_ds(
         kwargs["rasters_path"],

@@ -19,9 +19,26 @@
     </div>
     {% block scripts %}
 
-    <!-- Скрипт для форматирования даты -->
+    <!-- Скрипты для форматирования даты -->
     <script type="text/javascript">
         $('#dataset_calendar')
+            .calendar({
+                type: 'date',
+                formatter: {
+                    date: function (date, settings) {
+                        if (!date) return '';
+                        var day = date.getDate();
+                        var month = date.getMonth() + 1;
+                        var year = date.getFullYear();
+                        return year + '-' + month + '-' + day;
+                    }
+                }
+            })
+            ;
+    </script>
+
+    <script type="text/javascript">
+        $('#weather_dataset_calendar')
             .calendar({
                 type: 'date',
                 formatter: {
@@ -109,7 +126,7 @@
             ;
     </script>
 
-    <!-- Скрипт для обработки формы и всплывающего окна -->
+    <!-- Скрипт для обработки форм и всплывающего окна -->
     <script>
         $(document).ready(function () {
             $("#submit").click(function (e) {
@@ -117,14 +134,58 @@
                 var form = $(this).parents("form:first");
                 $.ajax({
                     type: 'POST',
-                    url: '/script',
+                    url: '/sar_script',
                     data: form.serialize(),
                     success: function (response) {
                         $('body')
                             .toast({
                                 title: 'SUCCESS',
                                 class: 'success',
-                                message: 'Script started with task id: ' + response.id,
+                                message: response.name + ' script started with task id: ' + response.id,
+                                showProgress: 'bottom',
+                                progressUp: true,
+                                position: 'top attached',
+                                transition: {
+                                    showMethod: 'fade down',
+                                    hideMethod: 'fade down',
+                                }
+                            });
+                    },
+                    error: function (response) {
+                        $('body')
+                            .toast({
+                                title: 'ERROR',
+                                class: 'error',
+                                message: 'Script not started. Error message: ' + response.responseJSON.detail[0].msg,
+                                showProgress: 'bottom',
+                                progressUp: true,
+                                position: 'top attached',
+                                transition: {
+                                    showMethod: 'fade down',
+                                    hideMethod: 'fade down',
+                                }
+                            });
+                    }
+                });
+            });
+        })
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $("#weather_submit").click(function (e) {
+                e.preventDefault();
+                var form = $(this).parents("form:first");
+                $.ajax({
+                    type: 'POST',
+                    url: '/weather_script',
+                    data: form.serialize(),
+                    success: function (response) {
+                        $('body')
+                            .toast({
+                                title: 'SUCCESS',
+                                class: 'success',
+                                message: response.name + ' script started with task id: ' + response.id,
                                 showProgress: 'bottom',
                                 progressUp: true,
                                 position: 'top attached',
@@ -167,6 +228,12 @@
         // $("#refresh-btn").on("click", RefreshTable);
     </script>
 
+    <!-- Скрипт смены табов -->
+    <script>
+        $('.menu .item')
+            .tab()
+            ;
+    </script>
     {% endblock %}
 </body>
 
