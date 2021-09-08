@@ -50,7 +50,12 @@ services:
       target: production
       <<: *default-user-args
     env_file: .env
-    command: celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
+    command: >
+      celery worker 
+      -c ${CELERY_NUM_WORKERS} 
+      -A celery_app.celery_app 
+      --loglevel=info 
+      --logfile=./logs/celery.log
     volumes:
       - ${BM_RASTER_SOURCE1:-./sar}:/home/user/worker/volumes/sar/source1
       - ${BM_ICEMAP_SOURCE1:-./icemap}:/home/user/worker/volumes/icemap/source1
@@ -68,7 +73,11 @@ services:
       <<: *default-user-args
     ports:
       - ${FLOWER_PORT}:${FLOWER_PORT}
-    command: flower -A celery_app.celery_app --port=$FLOWER_PORT --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
+    command: >
+      flower 
+      -A celery_app.celery_app 
+      --port=$FLOWER_PORT 
+      --broker=amqp://$RABBITMQ_USERNAME:$RABBITMQ_PASSWORD@$RABBITMQ_HOSTNAME:$RABBITMQ_NODE_PORT_NUMBER//
     env_file: .env
     depends_on:
       - redis
