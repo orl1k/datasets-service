@@ -58,12 +58,13 @@ class DataGatherer:
 class MultiDataGatherer:
     # Class to manage multiple DataGatherer apps
     def __init__(self):
+        self._name = self.__class__.__name__
         # storege for names of all added apps for fast access
         self._apps = []
 
     def add_app(self, name: str, app: DataGatherer):
         if name in self._apps:
-            print(f"MultiDataGatherer: app '{name}' already added")
+            print(f"{self._name}: app '{name}' already added")
             return
         self.__setattr__(name, app)
         self._apps.append(name)
@@ -75,7 +76,7 @@ class MultiDataGatherer:
             self.__delattr__(name)
             self._apps.remove(name)
         except AttributeError:
-            print(f"MultiDataGatherer: app '{name}' is not found")
+            print(f"{self._name}: app '{name}' is not found")
 
     def sync(self):
         for app in self._apps:
