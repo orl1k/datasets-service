@@ -1,3 +1,4 @@
+# Git and app related
 .git
 .gitignore
 LICENSE
@@ -5,8 +6,18 @@ VERSION
 README.md
 Changelog.md
 Makefile
+docs
+
+# Docker related
 dockerfile
 docker.prod
 docker-compose.yml
 docker-compose.prod.yml
-docs
+
+# Ignore internal app folders that might be created
+# on run with dev environment
+**/volumes
+**/sar
+**/icemap
+**/land
+**/output
