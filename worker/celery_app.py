@@ -1,4 +1,3 @@
-import os
 from celery import Celery
 from celery.signals import worker_shutdown
 from pydantic import BaseModel
@@ -74,44 +73,67 @@ def on_shutdown(sender=None, conf=None, **kwargs):
     dg_app.prune()
 
 
+# Arguments expected and used by 'run_sar_script' task
+class RunSarScriptTaskArguments(BaseModel):
+    dataset_date: str  # date in format: %Y%m%d
+    # Icemap parameters to add
+    age: bool = True
+    concentrat: bool = True
+    age_group: bool = True
+    # Haralick texture features to add
+    # TODO: change "simple" and "advanced" parameters so they
+    # will be able to accept list of features or "all" as value
+    simple: bool = True
+    advanced: bool = True
+
+
 @celery_app.task(bind=True, name="run_sar_script", acks_late=True)
 def run_script(self, **kwargs):
+    # Filter input arguments by using model RunSarScriptTaskArguments
+    args = RunSarScriptTaskArguments(**kwargs).dict()
     dg_app.sync()  # sync input all input sources fist
 
-    kwargs["ice_params"] = (
-        "age " * kwargs["age"]
-        + "concentrat " * kwargs["concentrat"]
-        + "age_group" * kwargs["age_group"]
+    args["ice_params"] = (
+        "age " * args["age"]
+        + "concentrat " * args["concentrat"]
+        + "age_group" * args["age_group"]
     )
-    kwargs["simple"] = "all" * kwargs["simple"]
-    kwargs["advanced"] = "all" * kwargs["advanced"]
+    args["simple"] = "all" * args["simple"]
+    args["advanced"] = "all" * args["advanced"]
     print("task_id: " + self.request.id)
-    print(kwargs)
+    print(args)
 
     ds_arrays.create_ds_arrays(
-        kwargs["dataset_date"],
+        args["dataset_date"],
         mounts.icemaps,
         mounts.rasters,
         mounts.output,
         mounts.land,
-        kwargs["ice_params"],
-        simple_band_nums=ds_arrays.get_band_nums(kwargs["simple"]),
-        advanced_band_nums=ds_arrays.get_band_nums(kwargs["advanced"]),
+        args["ice_params"],
+        simple_band_nums=ds_arrays.get_band_nums(args["simple"]),
+        advanced_band_nums=ds_arrays.get_band_nums(args["advanced"]),
     )
 
     return True
 
 
+# Arguments expected and used by 'run_weather_script' task
+class RunWeatherScriptTaskArguments(BaseModel):
+    dataset_date: str  # date in format: %Y%m%d
+
+
 @celery_app.task(bind=True, name="run_weather_script", acks_late=True)
 def run_weather_script(self, **kwargs):
+    # Filter input arguments by using model RunWeatherScriptTaskArguments
+    args = RunWeatherScriptTaskArguments(**kwargs).dict()
     dg_app.rasters.sync()  # sync input raster sources fist
 
     print("task_id: " + self.request.id)
-    print(kwargs)
+    print(args)
 
     ds_arrays.create_weather_ds(
         mounts.rasters,
-        kwargs["dataset_date"],
+        args["dataset_date"],
         mounts.output,
         ds_arrays.weather_params,
     )
