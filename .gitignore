@@ -21,3 +21,10 @@ __pycache__
 
 # MyPy cache
 .mypy_cache
+
+# App internal fodlers
+**/volumes/
+**/sar/
+**/icemap/
+**/land/
+**/output/

@@ -77,7 +77,7 @@ USER $USER:$GROUP
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR /home/user/worker
-RUN mkdir logs
+RUN mkdir -p logs sar icemap land output volumes/sar volumes/icemap
 
 # Install application into container
 COPY *.py ./
@@ -93,7 +93,7 @@ USER $USER:$GROUP
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR /home/user/worker
-RUN mkdir logs
+RUN mkdir -p logs sar icemap land output volumes/sar volumes/icemap
 
 # Install application into container
 COPY *.py ./

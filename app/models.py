@@ -33,10 +33,6 @@ def as_form(cls: Type[BaseModel]):
 @as_form
 class SarScriptArgs(BaseModel):
     dataset_date: datetime.date
-    rasters_path: str
-    datasets_path: str
-    icemaps_path: str
-    land_path: str
     age: bool = True
     concentrat: bool = True
     age_group: bool = True
@@ -48,6 +44,4 @@ class SarScriptArgs(BaseModel):
 @as_form
 class WeatherScriptArgs(BaseModel):
     dataset_date: datetime.date
-    rasters_path: str
-    datasets_path: str
     task_priority: int = 5

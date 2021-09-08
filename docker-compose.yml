@@ -30,9 +30,9 @@ services:
     hostname: ${RABBITMQ_HOSTNAME}
     image: rabbitmq:3.8
     volumes:
-      - ./rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
-      - ./rabbitmq/data:/var/lib/rabbitmq/
-      - ./rabbitmq/log:/var/log/rabbitmq
+      - ${BM_RABBITMQ:-./rabbitmq}/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ${BM_RABBITMQ:-./rabbitmq}/data:/var/lib/rabbitmq/
+      - ${BM_RABBITMQ:-./rabbitmq}/log:/var/log/rabbitmq
     restart: always
 
   redis:
@@ -40,7 +40,7 @@ services:
     image: redis:6-alpine
     command: redis-server --requirepass ${REDIS_PASSWORD}
     volumes:
-      - ./redis/data:/data
+      - ${BM_REDIS:-./redis}/data:/data
     restart: always
 
   worker:
@@ -51,6 +51,11 @@ services:
       <<: *default-user-args
     env_file: .env
     command: celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
+    volumes:
+      - ${BM_RASTER_SOURCE1:-./sar}:/home/user/worker/volumes/sar/source1
+      - ${BM_ICEMAP_SOURCE1:-./icemap}:/home/user/worker/volumes/icemap/source1
+      - ${BM_LAND:-./land}:/home/user/worker/land
+      - ${BM_OUTPUT:-./output}:/home/user/worker/output
     depends_on:
       - rabbitmq
       - redis

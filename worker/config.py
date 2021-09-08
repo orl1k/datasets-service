@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     redis_password: str
     redis_hostname: str
     flower_port: str
+    link_only_folders: bool = True  # is used by DataGatherer
 
     class Config:
         env_file = ".env"
