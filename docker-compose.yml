@@ -51,6 +51,11 @@ services:
       <<: *default-user-args
     env_file: .env
     command: celery worker -c ${CELERY_NUM_WORKERS} -A celery_app.celery_app --loglevel=info --logfile=./logs/celery.log
+    volumes:
+      - ${BM_RASTER_SOURCE1}:/home/user/worker/volumes/sar/source1
+      - ${BM_ICEMAP_SOURCE1}:/home/user/worker/volumes/icemap/source1
+      - ${BM_LAND}:/home/user/worker/land
+      - ${BM_OUTPUT}:/home/user/worker/output
     depends_on:
       - rabbitmq
       - redis
