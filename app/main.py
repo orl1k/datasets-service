@@ -88,8 +88,6 @@ async def handle_weather_args(
     """
     Выберите аргументы скрипта сборки датасета с погодой:
     - **dataset_date**: дата, за которую будет собран датасет
-    - **rasters_path**: директория, содержащая снимки
-    - **datasets_path**: директория с датасетами
     """
     try:
         args_dict = args.dict()

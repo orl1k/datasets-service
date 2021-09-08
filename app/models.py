@@ -44,6 +44,4 @@ class SarScriptArgs(BaseModel):
 @as_form
 class WeatherScriptArgs(BaseModel):
     dataset_date: datetime.date
-    rasters_path: str
-    datasets_path: str
     task_priority: int = 5
