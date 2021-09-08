@@ -70,6 +70,8 @@ celery_app.conf.update(result_extended=True)
 
 @celery_app.task(bind=True, name="run_sar_script", acks_late=True)
 def run_script(self, **kwargs):
+    dg_app.sync()  # sync input all input sources fist
+
     kwargs["ice_params"] = (
         "age " * kwargs["age"]
         + "concentrat " * kwargs["concentrat"]
@@ -82,10 +84,10 @@ def run_script(self, **kwargs):
 
     ds_arrays.create_ds_arrays(
         kwargs["dataset_date"],
-        kwargs["icemaps_path"],
-        kwargs["rasters_path"],
-        kwargs["datasets_path"],
-        kwargs["land_path"],
+        mounts.icemaps,
+        mounts.rasters,
+        mounts.output,
+        mounts.land,
         kwargs["ice_params"],
         simple_band_nums=ds_arrays.get_band_nums(kwargs["simple"]),
         advanced_band_nums=ds_arrays.get_band_nums(kwargs["advanced"]),
@@ -96,13 +98,15 @@ def run_script(self, **kwargs):
 
 @celery_app.task(bind=True, name="run_weather_script", acks_late=True)
 def run_weather_script(self, **kwargs):
+    dg_app.rasters.sync()  # sync input raster sources fist
+
     print("task_id: " + self.request.id)
     print(kwargs)
 
     ds_arrays.create_weather_ds(
-        kwargs["rasters_path"],
+        mounts.rasters,
         kwargs["dataset_date"],
-        kwargs["datasets_path"],
+        mounts.output,
         ds_arrays.weather_params,
     )
 
