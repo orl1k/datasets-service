@@ -1,7 +1,23 @@
 import os
 from celery import Celery
-from config import Settings
+from pydantic import BaseModel
+from pathlib import Path
+
 import ds_arrays
+from config import Settings
+
+class BindMounts(BaseModel):
+    # /home/user/worker part is taken from dockerfile
+    # Sentinel SAR image (raster) sources (dirs)
+    rasters_volume: Path = "/home/user/worker/volumes/sar"
+    rasters: Path = "/home/user/worker/sar"
+    # Ice map sources (dirs)
+    icemaps_volume: Path = "/home/user/worker/volumes/icemap"
+    icemaps: Path = "/home/user/worker/icemap"
+    # Land shp file source (dir)
+    land: Path = "/home/user/worker/land"
+    # Output directory that will contain final datasets
+    output: Path = "/home/user/worker/output"
 
 settings = Settings()
 celery_app = Celery(
