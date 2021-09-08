@@ -4,7 +4,9 @@ from pydantic import BaseModel
 from pathlib import Path
 
 import ds_arrays
+import multisource
 from config import Settings
+
 
 class BindMounts(BaseModel):
     # /home/user/worker part is taken from dockerfile
@@ -19,7 +21,36 @@ class BindMounts(BaseModel):
     # Output directory that will contain final datasets
     output: Path = "/home/user/worker/output"
 
+
+mounts = BindMounts()
 settings = Settings()
+
+
+def get_dg_app():
+    # Create MultiDataGatherer app to collect and sync
+    # required input data from multiple sources
+    dg_app = multisource.MultiDataGatherer()
+
+    rasters_dg = multisource.DataGatherer(
+        mounts.rasters_volume,
+        mounts.rasters,
+        link_folders_only=settings.link_only_folders,
+    )
+    dg_app.add_app("rasters", rasters_dg)
+
+    icemaps_dg = multisource.DataGatherer(
+        mounts.icemaps_volume,
+        mounts.icemaps,
+        link_folders_only=settings.link_only_folders,
+    )
+    dg_app.add_app("icemaps", icemaps_dg)
+
+    return dg_app
+
+
+dg_app = get_dg_app()
+
+# Main Celery app
 celery_app = Celery(
     settings.celery_app_name,
     broker=f"amqp://{settings.rabbitmq_username}:"
