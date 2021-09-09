@@ -27,10 +27,11 @@
                 formatter: {
                     date: function (date, settings) {
                         if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
+                        // In case of incorrect results, see:
+                        // https://stackoverflow.com/a/60858473/13266850
+                        // fr-CA locale gives date in ISO format, source
+                        // https://stackoverflow.com/a/69044670/13266850
+                        return date.toLocaleDateString('fr-CA');
                     }
                 }
             })
@@ -44,10 +45,11 @@
                 formatter: {
                     date: function (date, settings) {
                         if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
+                        // In case of incorrect results, see:
+                        // https://stackoverflow.com/a/60858473/13266850
+                        // fr-CA locale gives date in ISO format, source
+                        // https://stackoverflow.com/a/69044670/13266850
+                        return date.toLocaleDateString('fr-CA');
                     }
                 }
             })
