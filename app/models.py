@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from fastapi import Form
 from typing import Type
 import datetime
@@ -36,12 +36,24 @@ class SarScriptArgs(BaseModel):
     age: bool = True
     concentrat: bool = True
     age_group: bool = True
+    # TODO: change "simple" and "advanced" parameters so they
+    # will be able to accept list of features or "all" as value
     simple: bool = True
     advanced: bool = True
     task_priority: int = 5
+
+    @validator("dataset_date")
+    def format_dataset_date(cls, v: datetime.date) -> str:
+        # %Y%m%d date format is required by sar script (worker)
+        return v.strftime("%Y%m%d")
 
 
 @as_form
 class WeatherScriptArgs(BaseModel):
     dataset_date: datetime.date
     task_priority: int = 5
+
+    @validator("dataset_date")
+    def format_dataset_date(cls, v: datetime.date) -> str:
+        # %Y%m%d date format is required by weather script (worker)
+        return v.strftime("%Y%m%d")
