@@ -1,6 +1,6 @@
 from pydantic import BaseModel, validator
 from fastapi import Form
-from typing import Type
+from typing import Type, Union
 import datetime
 import inspect
 
@@ -31,8 +31,11 @@ def as_form(cls: Type[BaseModel]):
 
 
 # Преобразование str -> list[int]
-def normalize(arr: str):
-    return [str(i) for i, val in enumerate(arr.split(",")) if int(val)]
+def normalize(arr: Union[str, list[str]]):
+    if isinstance(arr, str):
+        return [str(i) for i, val in enumerate(arr.split(",")) if int(val)]
+    else:
+        return arr
 
 
 @as_form
