@@ -32,6 +32,7 @@ def as_form(cls: Type[BaseModel]):
 
 # Преобразование str -> list[int]
 def normalize(arr: Union[str, list[str]]):
+    # Прим. (с веба) ['0', '0', '1'] -> ['3']
     if isinstance(arr, str):
         return [str(i) for i, val in enumerate(arr.split(",")) if int(val)]
     else:
