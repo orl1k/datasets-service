@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator
 from fastapi import Form
 from typing import Type
 import datetime
@@ -30,15 +30,23 @@ def as_form(cls: Type[BaseModel]):
     return cls
 
 
+# Преобразование str -> list[int]
+def normalize(arr: str):
+    return [str(i) for i, val in enumerate(arr.split(",")) if int(val)]
+
+
 @as_form
 class SarScriptArgs(BaseModel):
     dataset_date: datetime.date
     age: bool = True
     concentrat: bool = True
     age_group: bool = True
-    simple: bool = True
-    advanced: bool = True
+    simple: list[str]
+    advanced: list[str]
     task_priority: int = 5
+
+    _simple = validator("simple", allow_reuse=True, pre=True)(normalize)
+    _advanced = validator("advanced", allow_reuse=True, pre=True)(normalize)
 
 
 @as_form
