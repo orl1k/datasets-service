@@ -18,6 +18,8 @@ services:
       context: ./app
       <<: *default-user-args
     env_file: .env
+    volumes:
+      - ${BM_API_DATA}:/home/user/app/data
     command: uvicorn main:app --host 0.0.0.0 --port ${BACKEND_PORT}
     healthcheck:
       test: curl -f http://0.0.0.0:8000/healthcheck || exit 1
