@@ -98,8 +98,6 @@ def run_script(self, **kwargs):
         + "concentrat " * args["concentrat"]
         + "age_group" * args["age_group"]
     )
-    args["simple"] = "all" * args["simple"]
-    args["advanced"] = "all" * args["advanced"]
     print("task_id: " + self.request.id)
     print(args)
 

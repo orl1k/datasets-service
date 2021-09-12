@@ -97,7 +97,11 @@
         $(document).ready(function () {
             $("#submit").click(function (e) {
                 e.preventDefault();
-                var form = $(this).parents("form:first");
+                var form = $(this).parents("form:first")
+                var advanced = $("input[name='advanced']").map(function () { return $(this).val(); }).get();
+                $("<input>", { name: "advanced", value: advanced }).appendTo(form);
+                var simple = $("input[name='simple']").map(function () { return $(this).val(); }).get();
+                $("<input>", { name: "simple", value: simple }).appendTo(form);
                 $.ajax({
                     type: 'POST',
                     url: '/sar_script',
@@ -131,6 +135,10 @@
                                     hideMethod: 'fade down',
                                 }
                             });
+                    },
+                    complete: function (data) {
+                        form.children().last().remove();
+                        form.children().last().remove();
                     }
                 });
             });
