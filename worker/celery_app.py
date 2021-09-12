@@ -2,6 +2,7 @@ from celery import Celery
 from celery.signals import worker_shutdown
 from pydantic import BaseModel
 from pathlib import Path
+from typing import List
 
 import ds_arrays
 import multisource
@@ -81,10 +82,8 @@ class RunSarScriptTaskArguments(BaseModel):
     concentrat: bool = True
     age_group: bool = True
     # Haralick texture features to add
-    # TODO: change "simple" and "advanced" parameters so they
-    # will be able to accept list of features or "all" as value
-    simple: bool = True
-    advanced: bool = True
+    simple: List[str] = []
+    advanced: List[str] = []
 
 
 @celery_app.task(bind=True, name="run_sar_script", acks_late=True)
