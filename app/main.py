@@ -26,7 +26,7 @@ task_queue_web: Deque = deque(maxlen=10)  # Очередь для монитор
 task_queue_web_file = "task_queue_web.pickle"
 if os.path.exists(task_queue_web_file):
     with open(task_queue_web_file, "rb") as f:
-        task_queue = pickle.load(f)
+        task_queue_web = pickle.load(f)
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
