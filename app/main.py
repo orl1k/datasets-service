@@ -10,6 +10,8 @@ import config
 from typing import Deque
 from collections import deque
 from functools import lru_cache
+from pydantic import BaseModel
+from pathlib import Path
 import traceback
 import pickle
 import os
@@ -22,8 +24,14 @@ def get_settings():
     return config.Settings()
 
 
+class BindMounts(BaseModel):
+    data: Path = Path("./data")
+
+
+mounts = BindMounts()
+
 task_queue_web: Deque = deque(maxlen=10)  # Очередь для мониторинга в вебе
-task_queue_web_file = "task_queue_web.pickle"
+task_queue_web_file = mounts.data.joinpath("task_queue_web.pickle")
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -142,5 +150,6 @@ def startup_event():
 
 @app.on_event("shutdown")
 def shutdown_event():
+    os.makedirs(mounts.data, exist_ok=True)
     with open(task_queue_web_file, "wb") as f:
         pickle.dump(task_queue_web, f)
