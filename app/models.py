@@ -66,8 +66,18 @@ class SarScriptArgs(BaseModel):
         fixed_length_normalizer(max_length=11)
     )
 
+    @validator("dataset_date")
+    def format_dataset_date(cls, v: datetime.date) -> str:
+        # %Y%m%d date format is required by sar script (worker)
+        return v.strftime("%Y%m%d")
+
 
 @as_form
 class WeatherScriptArgs(BaseModel):
     dataset_date: datetime.date
     task_priority: int = 5
+
+    @validator("dataset_date")
+    def format_dataset_date(cls, v: datetime.date) -> str:
+        # %Y%m%d date format is required by weather script (worker)
+        return v.strftime("%Y%m%d")

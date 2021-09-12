@@ -17,7 +17,13 @@ services:
     container_name: worker
     build:
       target: development
-    command: watchmedo auto-restart -- celery -c ${CELERY_NUM_WORKERS} worker -l info -A celery_app.celery_app
+    command: >
+      watchmedo auto-restart -- 
+      celery 
+      -c ${CELERY_NUM_WORKERS} 
+      worker 
+      -l info 
+      -A celery_app.celery_app
     volumes:
       - ./worker:/home/user/worker
 

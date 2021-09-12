@@ -24,9 +24,6 @@ def get_settings():
 
 task_queue_web: Deque = deque(maxlen=10)  # Очередь для мониторинга в вебе
 task_queue_web_file = "task_queue_web.pickle"
-if os.path.exists(task_queue_web_file):
-    with open(task_queue_web_file, "rb") as f:
-        task_queue = pickle.load(f)
 
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -132,6 +129,15 @@ def flower_redirect(
 @app.get("/healthcheck", status_code=200)
 def health_check() -> JSONResponse:
     return JSONResponse({"healthcheck": "OK"})
+
+
+@app.on_event("startup")
+def startup_event():
+    global task_queue_web
+    if not os.path.exists(task_queue_web_file):
+        return
+    with open(task_queue_web_file, "rb") as f:
+        task_queue_web = pickle.load(f)
 
 
 @app.on_event("shutdown")

@@ -514,7 +514,7 @@ def get_marked_icemap(icemap_dir):
     search_path = os.path.join(icemap_dir, "map", "source", "*_marked.shp")
     marked_icemap_fp = glob.glob(search_path)
     if len(marked_icemap_fp) == 0:
-        print(f"  Not found marked icemap for {date} ({search_path})")
+        print(f"  Not found marked icemap (regex: {search_path})")
         return
     return gdal.OpenEx(marked_icemap_fp[0])
 
