@@ -27,10 +27,11 @@
                 formatter: {
                     date: function (date, settings) {
                         if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
+                        // In case of incorrect results, see:
+                        // https://stackoverflow.com/a/60858473/13266850
+                        // fr-CA locale gives date in ISO format, source
+                        // https://stackoverflow.com/a/69044670/13266850
+                        return date.toLocaleDateString('fr-CA');
                     }
                 }
             })
@@ -44,10 +45,11 @@
                 formatter: {
                     date: function (date, settings) {
                         if (!date) return '';
-                        var day = date.getDate();
-                        var month = date.getMonth() + 1;
-                        var year = date.getFullYear();
-                        return year + '-' + month + '-' + day;
+                        // In case of incorrect results, see:
+                        // https://stackoverflow.com/a/60858473/13266850
+                        // fr-CA locale gives date in ISO format, source
+                        // https://stackoverflow.com/a/69044670/13266850
+                        return date.toLocaleDateString('fr-CA');
                     }
                 }
             })
@@ -84,43 +86,7 @@
                                 prompt: 'Please select a dataset date'
                             }
                         ]
-                    },
-                    rasters_path: {
-                        identifier: 'rasters_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a rasters path'
-                            }
-                        ]
-                    },
-                    datasets_path: {
-                        identifier: 'datasets_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a datasets path'
-                            }
-                        ]
-                    },
-                    icemaps_path: {
-                        identifier: 'icemaps_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a icemaps path'
-                            }
-                        ]
-                    },
-                    land_path: {
-                        identifier: 'land_path',
-                        rules: [
-                            {
-                                type: 'empty',
-                                prompt: 'Please select a earth shape path'
-                            }
-                        ]
-                    },
+                    }
                 }
             })
             ;
@@ -131,7 +97,11 @@
         $(document).ready(function () {
             $("#submit").click(function (e) {
                 e.preventDefault();
-                var form = $(this).parents("form:first");
+                var form = $(this).parents("form:first")
+                var advanced = $("input[name='advanced']").map(function () { return $(this).val(); }).get();
+                $("<input>", { name: "advanced", value: advanced }).appendTo(form);
+                var simple = $("input[name='simple']").map(function () { return $(this).val(); }).get();
+                $("<input>", { name: "simple", value: simple }).appendTo(form);
                 $.ajax({
                     type: 'POST',
                     url: '/sar_script',
@@ -165,6 +135,10 @@
                                     hideMethod: 'fade down',
                                 }
                             });
+                    },
+                    complete: function (data) {
+                        form.children().last().remove();
+                        form.children().last().remove();
                     }
                 });
             });

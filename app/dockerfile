@@ -69,6 +69,8 @@ USER $USER:$GROUP
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
 WORKDIR /home/user/app
+
+RUN mkdir -p data
 COPY . .
 
 # Run uvicorn server:

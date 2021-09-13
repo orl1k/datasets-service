@@ -23,8 +23,11 @@ __pycache__
 .mypy_cache
 
 # App internal fodlers
+# Worker
 **/volumes/
 **/sar/
 **/icemap/
 **/land/
 **/output/
+# Api
+**/data/
